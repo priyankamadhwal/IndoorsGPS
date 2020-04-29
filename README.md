@@ -9,12 +9,6 @@ Build a web tool which shows a building boundary and all the people moving insid
 * Android SDK
 * Android Studio IDE
 
-### To Do
-- [x] 1  
-- [ ] 2
-
-### Development Choices
-
 ## Getting Started
 
 ### Prerequisites
@@ -27,5 +21,23 @@ To import this project into Android Studio, proceed as follows:
 2. Enter URL: https://github.com/priyankamadhwal/IndoorsGPS.git
 3. Click **Clone**.
 5. [Build and run the app](https://developer.android.com/studio/run).
+
+## Dev
+
+### To Do
+- [x] Setting up Permissions  
+- [x] Getting location updates when application is running in foreground
+- [x] Creating a notification channel for foreground service
+- [x] Getting location updates when application is in background or killed (Service)
+- [x] Updating UI from Service using a Broadcast Reciever
+- [x] Connecting to server using an HTTP Client
+- [ ] Adding Geofencing feature
+- [ ] Authentication
+
+### Development Choices
+<details>
+<summary>Click to expand</summary>
+whatever
+</details>
 
 ## References
