@@ -36,8 +36,8 @@ To import this project into Android Studio, proceed as follows:
 
 ### Development Choices
 <details>
-<summary>Click to expand</summary>
-whatever
+  <summary><b>Getting location updates</b></summary>
+Mainly, there are two different ways to do it:
 </details>
 
 ## References
