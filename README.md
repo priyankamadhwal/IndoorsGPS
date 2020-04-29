@@ -67,13 +67,12 @@ As GPS is most accurate so using that would be an obvious choice. But inside bui
 This is built on top of Android’s API and automatically chooses what underlying provider to use on the basis of accuracy, battery usage, performance improvement etc.<br />
 <br />
 According to the docs:<br />
-<br />
-<code>
-The Google Play services location APIs are preferred over the Android framework location APIs (android.location) as a way of adding location awareness to your app. If you are currently using the Android framework location APIs, you are strongly encouraged to switch to the Google Play services location APIs as soon as possible.
-…
+<blockquote>
+The Google Play services location APIs are preferred over the Android framework location APIs (android.location) as a way of adding location awareness to your app. If you are currently using the Android framework location APIs, you are strongly encouraged to switch to the Google Play services location APIs as soon as possible.<br/>
+…<br />
 The Google Location Services API, part of Google Play Services, provides a more powerful, high-level framework that automatically handles location providers, user movement, and location accuracy. It also handles location update scheduling based on power consumption parameters you provide. In most cases, you'll get better battery performance, as well as more appropriate accuracy, by using the Location Services API.
-</code>
-<br />
+</blockquote>
+<br /><br />
 It's drawback is that app will only be able to run on devices with google play services installed in it.<br />
 <br />
 <b><u>Proposed solution:</u></b><br />
