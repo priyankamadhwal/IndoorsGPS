@@ -34,7 +34,7 @@ To import this project into Android Studio, proceed as follows:
 - [ ] Adding Geofencing feature _(currently working on this)_
 - [ ] Authentication
 
-### Development Choices
+### Development Decisions
 *(Click to expand)*
 <details>
   <summary><b>Getting location updates</b></summary>
@@ -108,7 +108,7 @@ It's drawback is that app will only be able to run on devices with Google Play s
   <b>Global vs. Local Broadcasts</b>
   <br/>
   <p>
-    Using a <i>global broadcast</i>, any other application can also send and receives broadcast messages to and from our application. This can be a serious security threat for the application. Also global broadcast is sent system-wide, so it is not performance efficient.
+    Using a <i>global broadcast</i>, any other application can also send and receive broadcast messages to and from our application. This can be a serious security threat for the application. Also global broadcast is sent system-wide, so it is not performance efficient.
   </p>
   <p>
     <br />
@@ -128,12 +128,13 @@ It's drawback is that app will only be able to run on devices with Google Play s
 
 <details>
   <summary><b>Connecting the app with Server</b></summary><br />
-  There are a lot of networking libraies that can be used for this purpose- OkHttp, AndroidAsync, Retrofit, Volley, Robospice etc.<br /><br /> 
+  There are a lot of networking libraries that can be used for this purpose- OkHttp, AndroidAsync, Retrofit, Volley, Robospice etc.<br /><br /> 
   <b><u>Our solution:</u></b><br />
   We are using <b>Retrofit</b> in this project because of following reasons:<br />
   <ul>
     <li>Easy to understand and use</li>
-    <li>Treats the Api calls as simple java method calls and also handle the Json/Xml parsing itself</li>
+    <li>Treats the Api calls as simple java method calls</li>
+    <li>Handles the Json/Xml parsing itself</li>
     <li>We do not have too many custom requirements in terms of caching and request prioritization</li>
     <li>Good community support</li>
   </ul>
