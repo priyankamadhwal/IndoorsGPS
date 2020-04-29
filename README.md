@@ -97,7 +97,7 @@ It's drawback is that app will only be able to run on devices with Google Play s
   <p>But as this notification couldn't be dismissed, users may find this behavior annoying.</p>
   <br />
   <p><b><u>Our solution:</u></b><br />
-    We will be using a Foreground Service for Android versions O and above as it makes it possible to get uninterrupted continuous location updated which is very essential for this app.
+    We will be using a Foreground Service for Android versions O and above as it makes it possible to get uninterrupted continuous location updates which is very essential for this app.
   </p>
   <br />
 </details>
