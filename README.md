@@ -79,8 +79,6 @@ It's drawback is that app will only be able to run on devices with google play s
 - Check if the user’s device has the play services installed.<br />
 - If yes, then use FusedLocationProviderClient. <br />
 - Otherwise, use Android's Location API.<br />
-<br />
-<br />
 <i><b>Note: </b>Currently we are using only FusedLocationProviderClient and will add Android Location API in a later update.</i>
 <br />
 </details>
@@ -95,9 +93,36 @@ It's drawback is that app will only be able to run on devices with google play s
   <b>Foreground services: </b><br /><br /> 
 <p>A foreground service will keep the user aware that application is performing some background tasks by displaying a persistent notification and the system will consider it to be something the user is actively aware of and thus not a candidate for killing when low on memory or power.</p>
   <p>But as this notification couldn't be dismissed, users may find this annoying.</p>
+  <br />
   <p><b><u>Our solution:</u></b><br />
     We will be using a Foreground Service for Android versions O and above as it makes it possible to get uninterrupted continuous location updated which is very essential for this app.
   </p>
 </details>
 
+<details>
+  <summary>Android Broadcasts</summary>
+  <br />
+  <b>Global vs. Local Broadcasts</b>
+  <br/>
+  <p>
+    Using a <i>global broadcast</i>, any other application can also send and receives broadcast messages to and from our application. This can be a serious security thread for the application. Also global broadcast is sent system-wide, so it is not performance efficient.
+  </p>
+  <p>
+    <br />
+    In this case Android provides <i>local broadcasts</i> with the <b>LocalBroadcastManager</b> class which provides following benifits:<br />
+<ul>
+  <li>Broadcast data won’t leave your app, so don’t need to worry about leaking private data.</li>
+<li>It is not possible for other applications to send these broadcasts to your app, so you don’t need to worry about having security holes they can exploit.</li>
+<li>It is more efficient than sending a global broadcast through the system.</li>
+<li>No overhead of system-wide broadcast.</li>
+  </ul>
+<p>
+<br />
+<b><u>Our solution:</u></b><br />
+  We are using a BroadcastReceiver to receive the updated location in <i>MainActivity</i> that is going to be broadcast locally from the Service and then update the UI.
+<br />
+</details>
+
 ## References
+- https://medium.com/@kevalpatel2106/how-to-handle-background-services-in-android-o-f96783e65268
+- https://android.jlelse.eu/local-broadcast-less-overhead-and-secure-in-android-cfa343bb05be
