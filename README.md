@@ -1,5 +1,5 @@
 # IndoorsGPS
-An android application developed under ACMS (Amazon Campus Mentorship Series).
+An android application developed under ACMS (Amazon Campus Mentorship Series) project.
 
 ### Problem Statement
 Build a web tool which shows a building boundary and all the people moving inside that building. It will capture the movement data using an app which will be installed on the mobile devices of all those people, and that app will keep sending location information to a server periodically. The location accuracy should not be more than 5 meters.
