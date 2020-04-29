@@ -1,4 +1,4 @@
-# IndoorGPS
+# IndoorsGPS
 An android application developed under ACMS (Amazon Campus Mentorship Series).
 
 ### Problem Statement
@@ -41,31 +41,32 @@ To import this project into Android Studio, proceed as follows:
         
 Mainly, there are two different ways to do it:
 
-<b>1. Android Location API</b>
+<b>1. Android Framework Location API</b>
 <br />
 It has 3 location providers:<br>
   1.	NETWORK_PROVIDER<br />
           - Calculates location using nearest cell towers and wifi access points.<br />
           - Uses ACCESS_COARSE_LOCATION permission which allows the app to get only an approximated location.<br />
           - It is fast and battery consumption is low.<br /> 
-          - But Accuracy is not good.<br />
+          - Accuracy is not very good.<br />
   2.	GPS_PROVIDER<br />
           - Gets location values using satellites.<br />
           - Uses ACCESS_FINE_LOCATION permission to provide a more precise/accurate location.<br /> 
-          - It gives high accuracy of current location.<br /> 
-          - But need continuous power supply and takes some time to give results.<br />  
+          - Gives high accuracy of current location.<br /> 
+          - Needs continuous power supply.
+          - Might be slow sometimes.<br />  
   3.	PASSIVE_PROVIDER<br />
           - Does not request location updates itself.<br />
           - Passively receives location information from other applications that are using location services.<br /> 
-          - This is not reliable because if no other app on the phone is getting location updates, our app won't get them either.<br /> 
+          - Not reliable because if no other app on the phone is getting location updates, our app won't get them either.<br /> 
           - Accuracy is also very low.<br />
  <br />         
-As GPS is most accurate so using that would be an obvious choice. But inside buildings, sometimes GPS is not available and in that case we might want to switch to Network provider until GPS becomes available again. But it causes huge battery drain to switch to exact location provider and also takes long to give results.<br />
+As GPS is most accurate, so using that would be an obvious choice. But inside buildings, sometimes GPS is not available and in that case we might want to switch to Network provider until GPS becomes available again. But it causes huge battery drain to switch to exact location provider and may take a little longer to give the result.<br />
 <br />
 <b>2. FusedLocationProviderClient by Google Play Services</b><br />
 <br />
-This is built on top of Android’s API and automatically chooses what underlying provider to use on the basis of accuracy, battery usage, performance improvement etc.
-<br />
+This is built on top of Android’s API and automatically chooses what underlying provider to use on the basis of accuracy, battery usage, speed etc.
+<br /><br />
 According to the docs:<br />
 <blockquote>
 The Google Play services location APIs are preferred over the Android framework location APIs (android.location) as a way of adding location awareness to your app. If you are currently using the Android framework location APIs, you are strongly encouraged to switch to the Google Play services location APIs as soon as possible.<br/>
@@ -73,7 +74,7 @@ The Google Play services location APIs are preferred over the Android framework 
 The Google Location Services API, part of Google Play Services, provides a more powerful, high-level framework that automatically handles location providers, user movement, and location accuracy. It also handles location update scheduling based on power consumption parameters you provide. In most cases, you'll get better battery performance, as well as more appropriate accuracy, by using the Location Services API.
 </blockquote>
 <br />
-It's drawback is that app will only be able to run on devices with google play services installed in it.<br />
+It's drawback is that app will only be able to run on devices with Google Play services installed in it.<br />
 <br />
 <b><u>Our solution:</u></b><br />
 - Check if the user’s device has the play services installed.<br />
@@ -89,11 +90,11 @@ It's drawback is that app will only be able to run on devices with google play s
   <br />
   <b>Background services: </b><br /><br />        
 <p>Whenever an application runs in the background using services, it consumes memory and battery which are very limited resources. So, Android O onwards, the application is allowed to create and run background services only for a few minutes after which they are killed by the system. </p>
-<p>Some periodic task can be created using a scheduler that will start service again after some given interval, service will do its work and then stop itself again. By this the application will not be considered battery draining. But there are some limitations in the number of times an app can request location update in background. Also the doze mode and app standby by delays the execution by some amount of time if the phone is idle.</p>
+<p>Some periodic task can be created using a scheduler that will start service again after some given interval, service will do its work and then stop itself again. By this, the application will not be considered battery draining. But there are some limitations in the number of times an app can request location update in background. Also the doze mode and app standby delays the execution by some amount of time if the phone is idle.</p>
   <br />
   <b>Foreground services: </b><br /><br /> 
 <p>A foreground service will keep the user aware that application is performing some background tasks by displaying a persistent notification and the system will consider it to be something the user is actively aware of and thus not a candidate for killing when low on memory or power.</p>
-  <p>But as this notification couldn't be dismissed, users may find this annoying.</p>
+  <p>But as this notification couldn't be dismissed, users may find this behavior annoying.</p>
   <br />
   <p><b><u>Our solution:</u></b><br />
     We will be using a Foreground Service for Android versions O and above as it makes it possible to get uninterrupted continuous location updated which is very essential for this app.
@@ -107,11 +108,11 @@ It's drawback is that app will only be able to run on devices with google play s
   <b>Global vs. Local Broadcasts</b>
   <br/>
   <p>
-    Using a <i>global broadcast</i>, any other application can also send and receives broadcast messages to and from our application. This can be a serious security thread for the application. Also global broadcast is sent system-wide, so it is not performance efficient.
+    Using a <i>global broadcast</i>, any other application can also send and receives broadcast messages to and from our application. This can be a serious security threat for the application. Also global broadcast is sent system-wide, so it is not performance efficient.
   </p>
   <p>
     <br />
-    In this case Android provides <i>local broadcasts</i> with the <b>LocalBroadcastManager</b> class which provides following benifits:<br />
+    Android provides <i>local broadcasts</i> with the <b>LocalBroadcastManager</b> class which provides following benifits:<br />
 <ul>
   <li>Broadcast data won’t leave your app, so don’t need to worry about leaking private data.</li>
 <li>It is not possible for other applications to send these broadcasts to your app, so you don’t need to worry about having security holes they can exploit.</li>
@@ -126,7 +127,7 @@ It's drawback is that app will only be able to run on devices with google play s
 </details>
 
 <details>
-  <summary><b>Connecting the app with Server</br></summary>
+  <summary><b>Connecting the app with Server</b></summary><br /><br />
   There are a lot of networking libraies that can be used for this purpose- OkHttp, AndroidAsync, Retrofit, Volley, Robospice etc.<br /><br /> 
   <b><u>Our solution:</u></b><br />
   We are using <b>Retrofit</b> in this project because of following reasons:<br />
@@ -136,8 +137,7 @@ It's drawback is that app will only be able to run on devices with google play s
     <li>We do not have too many custom requirements in terms of caching and request prioritization</li>
     <li>Good community support</li>
   </ul>
-<br /><br />
-  <br /><br />
+<br /><br /><br />
 </details>
 
 ## References
