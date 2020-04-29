@@ -127,7 +127,7 @@ It's drawback is that app will only be able to run on devices with Google Play s
 </details>
 
 <details>
-  <summary><b>Connecting the app with Server</b></summary><br /><br />
+  <summary><b>Connecting the app with Server</b></summary><br />
   There are a lot of networking libraies that can be used for this purpose- OkHttp, AndroidAsync, Retrofit, Volley, Robospice etc.<br /><br /> 
   <b><u>Our solution:</u></b><br />
   We are using <b>Retrofit</b> in this project because of following reasons:<br />
