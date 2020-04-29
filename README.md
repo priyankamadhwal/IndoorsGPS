@@ -43,7 +43,7 @@ Mainly, there are two different ways to do it:
 
 <b>1. Android Location API</b>
 <br />
-Android Location API has 3 location providers:<br>
+It has 3 location providers:<br>
   1.	NETWORK_PROVIDER<br />
           - Calculates location using nearest cell towers and wifi access points.<br />
           - Uses ACCESS_COARSE_LOCATION permission which allows the app to get only an approximated location.<br />
@@ -80,6 +80,21 @@ It's drawback is that app will only be able to run on devices with google play s
 - If yes, then use FusedLocationProviderClient. <br />
 - Otherwise, use Android's Location API.<br />
 <br />
+<br />
+<i><b>Note: </b>Currently we are using only FusedLocationProviderClient and will add Android Location API in future.</i>
+<br />
+</details>
+
+<details>
+  <summary><b>Services in Android</b></summary>
+  <b>Background services: </b><br /><br />        
+<p>Whenever an application runs in the background using services, it consumes memory and battery which are very limited resources. So, Android O onwards, the application is allowed to create and run background services only for a few minutes after which they are killed by the system. </p>
+<p>Some periodic task can be created using a scheduler that will start service again after some given interval, service will do its work and then stop itself again. By this the application will not be considered battery draining. But there are some limitations in the number of times an app can request location update in background. Also the doze mode and app standby by delays the execution by some amount of time if the phone is idle.</p>
+  <br />
+  <b>Foreground services: </b><br /><br /> 
+<p>A foreground service will keep the user aware that application is performing some background tasks by displaying a persistent notification and the system will consider it to be something the user is actively aware of and thus not a candidate for killing when low on memory or power.</p>
+  <p>But as this notification couldn't be dismissed, users may find this annoying.</p>
+  <p><i>In this app we are using a Foreground Service for versions Android O onwards.</i></p>
 </details>
 
 ## References
