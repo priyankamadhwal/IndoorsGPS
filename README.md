@@ -64,7 +64,7 @@ As GPS is most accurate so using that would be an obvious choice. But inside bui
 <br />
 <b>2. FusedLocationProviderClient by Google Play Services</b><br />
 <br />
-This is built on top of Android’s API and automatically chooses what underlying provider to use on the basis of accuracy, battery usage, performance improvement etc.<br />
+This is built on top of Android’s API and automatically chooses what underlying provider to use on the basis of accuracy, battery usage, performance improvement etc.
 <br />
 According to the docs:<br />
 <blockquote>
@@ -72,21 +72,22 @@ The Google Play services location APIs are preferred over the Android framework 
 …<br />
 The Google Location Services API, part of Google Play Services, provides a more powerful, high-level framework that automatically handles location providers, user movement, and location accuracy. It also handles location update scheduling based on power consumption parameters you provide. In most cases, you'll get better battery performance, as well as more appropriate accuracy, by using the Location Services API.
 </blockquote>
-<br /><br />
+<br />
 It's drawback is that app will only be able to run on devices with google play services installed in it.<br />
 <br />
-<b><u>Proposed solution:</u></b><br />
+<b><u>Our solution:</u></b><br />
 - Check if the user’s device has the play services installed.<br />
 - If yes, then use FusedLocationProviderClient. <br />
 - Otherwise, use Android's Location API.<br />
 <br />
 <br />
-<i><b>Note: </b>Currently we are using only FusedLocationProviderClient and will add Android Location API in future.</i>
+<i><b>Note: </b>Currently we are using only FusedLocationProviderClient and will add Android Location API in a later update.</i>
 <br />
 </details>
 
 <details>
   <summary><b>Services in Android</b></summary>
+  <br />
   <b>Background services: </b><br /><br />        
 <p>Whenever an application runs in the background using services, it consumes memory and battery which are very limited resources. So, Android O onwards, the application is allowed to create and run background services only for a few minutes after which they are killed by the system. </p>
 <p>Some periodic task can be created using a scheduler that will start service again after some given interval, service will do its work and then stop itself again. By this the application will not be considered battery draining. But there are some limitations in the number of times an app can request location update in background. Also the doze mode and app standby by delays the execution by some amount of time if the phone is idle.</p>
@@ -94,7 +95,9 @@ It's drawback is that app will only be able to run on devices with google play s
   <b>Foreground services: </b><br /><br /> 
 <p>A foreground service will keep the user aware that application is performing some background tasks by displaying a persistent notification and the system will consider it to be something the user is actively aware of and thus not a candidate for killing when low on memory or power.</p>
   <p>But as this notification couldn't be dismissed, users may find this annoying.</p>
-  <p><i>In this app we are using a Foreground Service for versions Android O onwards.</i></p>
+  <p><b><u>Our solution:</u></b><br />
+    We will be using a Foreground Service for Android versions O and above as it makes it possible to get uninterrupted continuous location updated which is very essential for this app.
+  </p>
 </details>
 
 ## References
