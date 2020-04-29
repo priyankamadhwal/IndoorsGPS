@@ -41,18 +41,16 @@ public class MainActivity extends AppCompatActivity {
     private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
     private float GEOFENCE_RADIUS = 200;
     private String GEOFENCE_ID = "SOME_GEOFENCE_ID";
-    //private LatLng latLng = new LatLng(28.5754, 77.2425);
+    private double GEOFENCE_CENTER_LATITUDE = 28.5754;
+    private double GEOFENCE_CENTER_LONGITUDE = 77.2425;
 
     private BroadcastReceiver locationUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String latitude = intent.getStringExtra("latitude");
-            String longitude = intent.getStringExtra("longitude");
-            String altitude = intent.getStringExtra("altitude");
 
-            latitudeEdit.setText("Latitude : " + latitude);
-            longitudeEdit.setText("Longitude : " + longitude);
-            altitudeEdit.setText("Altitude : " + altitude);
+            updateUI(intent.getStringExtra("latitude"),
+                    intent.getStringExtra("longitude"),
+                    intent.getStringExtra("altitude"));
         }
     };
 
@@ -70,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Register a local broadcast manager to receive location updates
         // Receive intents with actions named "newLocationUpdate"
-        LocalBroadcastManager.getInstance(this).registerReceiver(locationUpdateReceiver, new IntentFilter("newLocationUpdate"));
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(locationUpdateReceiver, new IntentFilter("newLocationUpdate"));
     }
 
     @Override
@@ -80,17 +79,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 29) {
             // we need background permission
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    addGeofence();
-                } else {
-                    // Ask for permission
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        // We need to show user a dialog for displaying why the permission is needed and then ask for the permission
-                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
-                    } else {
-                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
-                    }
-                }
+                addLocationPermissions();
             } else {
                 // Ask for permission
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
@@ -102,22 +91,55 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // we do not need background permission
+            addLocationPermissions();
+        }
+    }
+
+    private void addLocationPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            addGeofence();
+        } else {
+            // Ask for permission
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // We need to show user a dialog for displaying why the permission is needed and then ask for the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationUpdateReceiver);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == FINE_LOCATION_ACCESS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // We have the permission
                 addGeofence();
             } else {
-                // Ask for permission
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    // We need to show user a dialog for displaying why the permission is needed and then ask for the permission
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
-                }
+                // We do not have the permission
+            }
+        }
+
+        if (requestCode == BACKGROUND_LOCATION_ACCESS_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // We have the permission
+                Toast.makeText(this, "You can add geofences...", Toast.LENGTH_SHORT).show();
+            } else {
+                // We do not have the permission
+                Toast.makeText(this, "Background location access is necessary for geofences...", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void addGeofence() {
-        Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, 28.5754, 77.2425, 200, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
+        Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, GEOFENCE_CENTER_LATITUDE, GEOFENCE_CENTER_LONGITUDE, GEOFENCE_RADIUS, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
         GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
         PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
         geofencingClient.addGeofences(geofencingRequest, pendingIntent)
@@ -136,74 +158,9 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
+    private void updateUI(String latitude, String longitude, String altitude) {
+        latitudeEdit.setText("Latitude : " + latitude);
+        longitudeEdit.setText("Longitude : " + longitude);
+        altitudeEdit.setText("Altitude : " + altitude);
     }
-
-    @Override
-    protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationUpdateReceiver);
-        super.onDestroy();
-    }
-
-    /*
-    private void askLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Toast.makeText(getApplicationContext(), "You should show an alert dialog", Toast.LENGTH_LONG).show();
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
-            }
-            else {
-                ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
-            }
-        }
-    }
-    */
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        /*
-        if (requestCode == LOCATION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted
-                //startLocationUpdatesService();
-            }
-            else {
-                // Permission not granted
-            }
-        }
-        */
-        if (requestCode == FINE_LOCATION_ACCESS_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // We have the
-                //mMap.setMyLocationEnabled(true);
-                addGeofence();
-            } else {
-                // We do not have the permission
-            }
-        }
-
-        if (requestCode == BACKGROUND_LOCATION_ACCESS_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // We have the
-                Toast.makeText(this, "You can add geofences...", Toast.LENGTH_SHORT).show();
-            } else {
-                // We do not have the permission
-                Toast.makeText(this, "Background location access is necessary for geofences...", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-/*
-    public void startLocationUpdatesService() {
-        Intent locationUpdatesServiceIntent = new Intent(this, LocationUpdatesService.class);
-        ContextCompat.startForegroundService(this, locationUpdatesServiceIntent); // starts service when the app is in background service
-    }
-
-    public void stopLocationUpdatesService() {
-        Intent locationUpdatesServiceIntent = new Intent(this, LocationUpdatesService.class);
-        stopService(locationUpdatesServiceIntent);
-    }
- */
 }

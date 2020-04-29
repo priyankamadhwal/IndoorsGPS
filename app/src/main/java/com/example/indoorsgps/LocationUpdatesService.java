@@ -38,15 +38,10 @@ public class LocationUpdatesService extends Service {
             String latitude = intent.getStringExtra("latitude");
             String longitude = intent.getStringExtra("longitude");
             String altitude = intent.getStringExtra("altitude");
-            locationContent = "Latitude : " + latitude;
-            locationContent += "\nLongitude : " + longitude;
-            locationContent += "\nAltitude : " + altitude;
 
-            Intent locIntent = new Intent("newLocationUpdate");
-            locIntent.putExtra("latitude", latitude);
-            locIntent.putExtra("longitude", longitude);
-            locIntent.putExtra("altitude", altitude);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(locIntent);
+            locationContent = "Latitude : " + latitude + "\nLongitude : " + longitude + "\nAltitude : " + altitude;
+
+            sendLocalBroadcast(latitude, longitude, altitude);
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
@@ -66,14 +61,21 @@ public class LocationUpdatesService extends Service {
         locationUpdatesHelper.checkSettingsAndStartLocationUpdates();
 
         if (intent.getAction() != null && intent.getAction().equals("STOP_FOREGROUND_SERVICE")) {
+            locationUpdatesHelper.stopLocationUpdates();
             stopForeground(true);
             stopSelf();
             return START_NOT_STICKY;
         }
 
-        // do heavy work in a background thread
-
         return START_STICKY;
+    }
+
+    private void sendLocalBroadcast(String latitude, String longitude, String altitude) {
+        Intent locIntent = new Intent("newLocationUpdate");
+        locIntent.putExtra("latitude", latitude);
+        locIntent.putExtra("longitude", longitude);
+        locIntent.putExtra("altitude", altitude);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(locIntent);
     }
 
     @Override

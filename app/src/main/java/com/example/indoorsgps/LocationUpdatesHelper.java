@@ -31,7 +31,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class LocationUpdatesHelper {
+class LocationUpdatesHelper {
     private Context context;
 
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -45,7 +45,7 @@ public class LocationUpdatesHelper {
     private static String uniqueID = null;
     private static  String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
 
-    public synchronized static String getId (Context context) {
+    private synchronized static String getId(Context context) {
         if (uniqueID == null) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_UNIQUE_ID, Context.MODE_PRIVATE);
             uniqueID = sharedPreferences.getString(PREF_UNIQUE_ID, null);
@@ -59,7 +59,7 @@ public class LocationUpdatesHelper {
         return uniqueID;
     }
 
-    public LocationUpdatesHelper(Context context) {
+    LocationUpdatesHelper(Context context) {
         this.context = context;
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
 
@@ -120,7 +120,7 @@ public class LocationUpdatesHelper {
         }
     };
 
-    public void checkSettingsAndStartLocationUpdates() {
+    void checkSettingsAndStartLocationUpdates() {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
                 .build();
@@ -153,9 +153,7 @@ public class LocationUpdatesHelper {
     }
 
     private void startLocationUpdates() {
-        //id = getId(getApplicationContext());
 
-        String id = "abcdefgh";
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -166,7 +164,7 @@ public class LocationUpdatesHelper {
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
-    private void stopLocationUpdates() {
+    void stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 }
