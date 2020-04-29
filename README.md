@@ -81,6 +81,7 @@ It's drawback is that app will only be able to run on devices with google play s
 - Otherwise, use Android's Location API.<br />
 <i><b>Note: </b>Currently we are using only FusedLocationProviderClient and will add Android Location API in a later update.</i>
 <br />
+<br />
 </details>
 
 <details>
@@ -97,10 +98,11 @@ It's drawback is that app will only be able to run on devices with google play s
   <p><b><u>Our solution:</u></b><br />
     We will be using a Foreground Service for Android versions O and above as it makes it possible to get uninterrupted continuous location updated which is very essential for this app.
   </p>
+  <br />
 </details>
 
 <details>
-  <summary>Android Broadcasts</summary>
+  <summary><b>Android Broadcasts</b></summary>
   <br />
   <b>Global vs. Local Broadcasts</b>
   <br/>
@@ -120,7 +122,22 @@ It's drawback is that app will only be able to run on devices with google play s
 <br />
 <b><u>Our solution:</u></b><br />
   We are using a BroadcastReceiver to receive the updated location in <i>MainActivity</i> that is going to be broadcast locally from the Service and then update the UI.
-<br />
+<br /><br />
+</details>
+
+<details>
+  <summary><b>Connecting the app with Server</br></summary>
+  There are a lot of networking libraies that can be used for this purpose- OkHttp, AndroidAsync, Retrofit, Volley, Robospice etc.<br /><br /> 
+  <b><u>Our solution:</u></b><br />
+  We are using <b>Retrofit</b> in this project because of following reasons:<br />
+  <ul>
+    <li>Easy to understand and use</li>
+    <li>Treats the Api calls as simple java method calls and also handle the Json/Xml parsing itself</li>
+    <li>We do not have too many custom requirements in terms of caching and request prioritization</li>
+    <li>Good community support</li>
+  </ul>
+<br /><br />
+  <br /><br />
 </details>
 
 ## References
