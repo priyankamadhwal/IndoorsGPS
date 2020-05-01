@@ -58,14 +58,14 @@ public class LocationUpdatesService extends Service {
 
         startForeground(1, notification);
 
-        locationUpdatesHelper.checkSettingsAndStartLocationUpdates();
-
         if (intent.getAction() != null && intent.getAction().equals("STOP_FOREGROUND_SERVICE")) {
             locationUpdatesHelper.stopLocationUpdates();
             stopForeground(true);
             stopSelf();
             return START_NOT_STICKY;
         }
+
+        locationUpdatesHelper.checkSettingsAndStartLocationUpdates();
 
         return START_STICKY;
     }

@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private GeofencingClient geofencingClient;
     private GeofenceHelper geofenceHelper;
 
-    private float GEOFENCE_RADIUS = 200;
+    private float GEOFENCE_RADIUS = 100;
     private String GEOFENCE_ID = "SOME_GEOFENCE_ID";
     private double GEOFENCE_CENTER_LATITUDE = 28.5754;
     private double GEOFENCE_CENTER_LONGITUDE = 77.2425;
@@ -109,7 +109,10 @@ public class MainActivity extends AppCompatActivity {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
                             // Start location updates service
-                            startLocationUpdatesService();
+                            //startLocationUpdatesService();
+
+                            // Add geofence
+                            addGeofence();
                         }
 
                         // check for permanent denial of any permission
@@ -136,7 +139,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         // permission is granted
                         // Start location updates service
-                        startLocationUpdatesService();
+                        //startLocationUpdatesService();
+
+                        // Add geofence
+                        addGeofence();
                     }
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {

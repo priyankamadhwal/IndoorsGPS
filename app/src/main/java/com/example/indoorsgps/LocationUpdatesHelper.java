@@ -71,7 +71,7 @@ class LocationUpdatesHelper {
         id = getId(context);
     }
 
-    LocationCallback locationCallback = new LocationCallback() {
+    private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             if (locationResult == null) {
