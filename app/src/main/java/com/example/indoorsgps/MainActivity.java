@@ -3,7 +3,6 @@ package com.example.indoorsgps;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
@@ -14,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -108,9 +108,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
-                            // Start location updates service
-                            //startLocationUpdatesService();
-
                             // Add geofence
                             addGeofence();
                         }
@@ -138,9 +135,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         // permission is granted
-                        // Start location updates service
-                        //startLocationUpdatesService();
-
                         // Add geofence
                         addGeofence();
                     }
@@ -198,28 +192,41 @@ public class MainActivity extends AppCompatActivity {
         altitudeEdit.setText("Altitude : " + altitude);
     }
 
-    private void startLocationUpdatesService() {
-        Intent locationUpdatesServiceIntent = new Intent(this, LocationUpdatesService.class);
-        ContextCompat.startForegroundService(this, locationUpdatesServiceIntent); // starts service when the app is in background service
+    private void addGeofence() {
+        if (!checkGeofencesExist()) {
+            Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, GEOFENCE_CENTER_LATITUDE, GEOFENCE_CENTER_LONGITUDE, GEOFENCE_RADIUS, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT);
+            GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
+            PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
+            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "onSuccess : Geofence added...");
+                            saveGeofence();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            String errorMessage = geofenceHelper.getErrorString(e);
+                            Log.d(TAG, "onFailure : " + errorMessage);
+                        }
+                    });
+        }
     }
 
-    private void addGeofence() {
-        Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, GEOFENCE_CENTER_LATITUDE, GEOFENCE_CENTER_LONGITUDE, GEOFENCE_RADIUS, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
-        GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
-        PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
-        geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "onSuccess : Geofence added...");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        String errorMessage = geofenceHelper.getErrorString(e);
-                        Log.d(TAG, "onFailure : " + errorMessage);
-                    }
-                });
+    private boolean checkGeofencesExist() {
+        // Returns true if geofences exist
+        // Otherwise returns false
+        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("GEO_PREFS", Context.MODE_PRIVATE);
+        String geofencesExist = sharedPreferences.getString("Geofences added", null);
+        return !(geofencesExist == null);
+    }
+
+    private void saveGeofence() {
+        SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences("GEO_PREFS", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("Geofences added", "1");
+        editor.apply();
     }
 }
