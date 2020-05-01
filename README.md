@@ -38,6 +38,7 @@ To import this project into Android Studio, proceed as follows:
 *(Click to expand)*
 <details>
   <summary><b>Runtime permissions</b></summary>
+  <br />
   Android M (API 23) introduced runtime permissions, letting user to allow or deny any permission at runtime. This application uses ACCESS_FINE_LOCATION permission for location services and ACCESS_BACKGROUND_LOCATION permission (for Android 10 and above).<br/><br />
   <b><u>Our solution:</u></b><br />
   For granting each and every permission, long and tedious code is required. So, to overcome this, we are using <b>Dexter</b> library which simplifies the process of requesting runtime permissions.
@@ -46,7 +47,7 @@ To import this project into Android Studio, proceed as follows:
 
 <details>
   <summary><b>Getting location updates</b></summary>
-        
+      <br />  
 Mainly, there are two different ways to do it:
 
 <b>1. Android Framework Location API</b>
@@ -146,7 +147,7 @@ It's drawback is that app will only be able to run on devices with Google Play s
     <li>We do not have too many custom requirements in terms of caching and request prioritization</li>
     <li>Good community support</li>
   </ul>
-<br /><br />
+<br />
 </details>
 
 ## References
