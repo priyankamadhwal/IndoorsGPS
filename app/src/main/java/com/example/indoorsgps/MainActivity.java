@@ -1,23 +1,25 @@
 package com.example.indoorsgps;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -25,6 +27,16 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private GeofencingClient geofencingClient;
     private GeofenceHelper geofenceHelper;
 
-    private int FINE_LOCATION_ACCESS_REQUEST_CODE = 10001;
-    private int BACKGROUND_LOCATION_ACCESS_REQUEST_CODE = 10002;
     private float GEOFENCE_RADIUS = 200;
     private String GEOFENCE_ID = "SOME_GEOFENCE_ID";
     private double GEOFENCE_CENTER_LATITUDE = 28.5754;
@@ -76,38 +86,98 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if (Build.VERSION.SDK_INT >= 29) {
-            // we need background permission
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                addLocationPermissions();
-            } else {
-                // Ask for permission
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
-                    // We need to show user a dialog for displaying why the permission is needed and then ask for the permission
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, BACKGROUND_LOCATION_ACCESS_REQUEST_CODE);
-                }
-            }
-        }
-        else {
-            // we do not need background permission
-            addLocationPermissions();
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            requestPermissions();
     }
 
-    private void addLocationPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            addGeofence();
-        } else {
-            // Ask for permission
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // We need to show user a dialog for displaying why the permission is needed and then ask for the permission
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, FINE_LOCATION_ACCESS_REQUEST_CODE);
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            checkBackgroundAndFineLocationPermssions();
+        else
+            checkFineLocationPermission();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void checkBackgroundAndFineLocationPermssions() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            // Start location updates service
+                            startLocationUpdatesService();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // permission is denied permenantly, navigate user to app settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+    private void checkFineLocationPermission() {
+        Dexter.withActivity(this)
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse response) {
+                        // permission is granted
+                        // Start location updates service
+                        startLocationUpdatesService();
+                    }
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse response) {
+                        // check for permanent denial of permission
+                        if (response.isPermanentlyDenied()) {
+                            // navigate user to app settings
+                            showSettingsDialog();
+                        }
+                    }
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Need permissions");
+        builder.setMessage("This app requires location permissions. You can grant it from app settings");
+        builder.setPositiveButton("Go to settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
             }
-        }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
     }
 
     @Override
@@ -116,26 +186,15 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == FINE_LOCATION_ACCESS_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // We have the permission
-                addGeofence();
-            } else {
-                // We do not have the permission
-            }
-        }
+    private void updateUI(String latitude, String longitude, String altitude) {
+        latitudeEdit.setText("Latitude : " + latitude);
+        longitudeEdit.setText("Longitude : " + longitude);
+        altitudeEdit.setText("Altitude : " + altitude);
+    }
 
-        if (requestCode == BACKGROUND_LOCATION_ACCESS_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // We have the permission
-                Toast.makeText(this, "You can add geofences...", Toast.LENGTH_SHORT).show();
-            } else {
-                // We do not have the permission
-                Toast.makeText(this, "Background location access is necessary for geofences...", Toast.LENGTH_SHORT).show();
-            }
-        }
+    private void startLocationUpdatesService() {
+        Intent locationUpdatesServiceIntent = new Intent(this, LocationUpdatesService.class);
+        ContextCompat.startForegroundService(this, locationUpdatesServiceIntent); // starts service when the app is in background service
     }
 
     private void addGeofence() {
@@ -156,11 +215,5 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "onFailure : " + errorMessage);
                     }
                 });
-    }
-
-    private void updateUI(String latitude, String longitude, String altitude) {
-        latitudeEdit.setText("Latitude : " + latitude);
-        longitudeEdit.setText("Longitude : " + longitude);
-        altitudeEdit.setText("Altitude : " + altitude);
     }
 }

@@ -39,7 +39,7 @@ class LocationUpdatesHelper {
 
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
-    private String BASE_URL = "http://192.168.0.104:3000"; //"http://192.168.29.168:3000";
+    private String BASE_URL = "http://192.168.0.104:3000"; //"http://192.168.29.168:3000"; //"http://192.168.43.94:3000";
     private String TAG = "MainActivity";
     private  static String id;
     private static String uniqueID = null;
