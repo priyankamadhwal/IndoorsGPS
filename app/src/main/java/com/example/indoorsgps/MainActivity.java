@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
@@ -36,23 +37,29 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private TextView latitudeEdit;
-    private TextView longitudeEdit;
-    private TextView altitudeEdit;
+    private TextView latitudeView;
+    private TextView longitudeView;
+    private TextView altitudeView;
+    private TextView buildingIdView;
 
     private GeofencingClient geofencingClient;
     private GeofenceHelper geofenceHelper;
 
-    private float GEOFENCE_RADIUS = 100;
-    private String GEOFENCE_ID = "SOME_GEOFENCE_ID";
-    private double GEOFENCE_CENTER_LATITUDE = 28.5754;
-    private double GEOFENCE_CENTER_LONGITUDE = 77.2425;
+    private Retrofit retrofit;
+    private RetrofitInterface retrofitInterface;
+    private String BASE_URL = "http://192.168.0.104:3000";
 
     private BroadcastReceiver locationUpdateReceiver = new BroadcastReceiver() {
         @Override
@@ -60,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
 
             updateUI(intent.getStringExtra("latitude"),
                     intent.getStringExtra("longitude"),
-                    intent.getStringExtra("altitude"));
+                    intent.getStringExtra("altitude"),
+                    intent.getStringExtra("buildingId"));
         }
     };
 
@@ -69,9 +77,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        latitudeEdit = findViewById(R.id.latitude);
-        longitudeEdit = findViewById(R.id.longitude);
-        altitudeEdit = findViewById(R.id.altitude);
+        latitudeView = findViewById(R.id.latitude);
+        longitudeView = findViewById(R.id.longitude);
+        altitudeView = findViewById(R.id.altitude);
+        buildingIdView = findViewById(R.id.buildingId);
 
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeofenceHelper(this);
@@ -108,11 +117,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
-                            // Start location updates service
-                            //startLocationUpdatesService();
-
                             // Add geofence
-                            addGeofence();
+                            addGeofences();
                         }
 
                         // check for permanent denial of any permission
@@ -138,11 +144,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         // permission is granted
-                        // Start location updates service
-                        //startLocationUpdatesService();
-
                         // Add geofence
-                        addGeofence();
+                        addGeofences();
                     }
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
@@ -192,34 +195,69 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void updateUI(String latitude, String longitude, String altitude) {
-        latitudeEdit.setText("Latitude : " + latitude);
-        longitudeEdit.setText("Longitude : " + longitude);
-        altitudeEdit.setText("Altitude : " + altitude);
+    private void updateUI(String latitude, String longitude, String altitude, String buildingId) {
+        latitudeView.setText("Latitude : " + latitude);
+        longitudeView.setText("Longitude : " + longitude);
+        altitudeView.setText("Altitude : " + altitude);
+        buildingIdView.setText("Building ID : " + buildingId);
     }
 
-    private void startLocationUpdatesService() {
-        Intent locationUpdatesServiceIntent = new Intent(this, LocationUpdatesService.class);
-        ContextCompat.startForegroundService(this, locationUpdatesServiceIntent); // starts service when the app is in background service
+    private void addGeofences() {
+
+        retrofit = RetrofitClientInstance.getRetrofitInstance();
+        retrofitInterface = retrofit.create(RetrofitInterface.class);
+
+        Call<List<BuildingModel>> call = retrofitInterface.executeGetAllBuildingsInfo();
+
+        call.enqueue(new Callback<List<BuildingModel>>() {
+            @Override
+            public void onResponse(Call<List<BuildingModel>> call, Response<List<BuildingModel>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, "Getting building info- Failure code " + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                List <BuildingModel> buildings = response.body();
+                List <Geofence> geofencesList = getGeofencesList(buildings);
+
+                GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofencesList);
+                PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
+                geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "onSuccess : Geofences added...");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                String errorMessage = geofenceHelper.getErrorString(e);
+                                Log.d(TAG, "onFailure : " + errorMessage);
+                            }
+                        });
+
+            }
+
+            @Override
+            public void onFailure(Call<List<BuildingModel>> call, Throwable t) {
+
+            }
+        });
     }
 
-    private void addGeofence() {
-        Geofence geofence = geofenceHelper.getGeofence(GEOFENCE_ID, GEOFENCE_CENTER_LATITUDE, GEOFENCE_CENTER_LONGITUDE, GEOFENCE_RADIUS, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT);
-        GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofence);
-        PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
-        geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "onSuccess : Geofence added...");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        String errorMessage = geofenceHelper.getErrorString(e);
-                        Log.d(TAG, "onFailure : " + errorMessage);
-                    }
-                });
+    private List <Geofence> getGeofencesList(List <BuildingModel> buildings) {
+        List <Geofence> geofencesList = new ArrayList<Geofence>();
+        for (BuildingModel building : buildings) {
+            Geofence geofence = geofenceHelper.getGeofence(
+                    building.getId(),
+                    Double.parseDouble(building.getLatitude()),
+                    Double.parseDouble(building.getLongitude()),
+                    Float.parseFloat(building.getRadius()),
+                    Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT
+            );
+            geofencesList.add(geofence);
+        }
+        return geofencesList;
     }
 }

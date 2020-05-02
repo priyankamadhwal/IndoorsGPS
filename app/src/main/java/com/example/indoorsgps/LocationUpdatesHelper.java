@@ -29,7 +29,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 class LocationUpdatesHelper {
     private Context context;
@@ -39,11 +38,11 @@ class LocationUpdatesHelper {
 
     private Retrofit retrofit;
     private RetrofitInterface retrofitInterface;
-    private String BASE_URL = "http://192.168.0.104:3000"; //"http://192.168.29.168:3000"; //"http://192.168.43.94:3000";
     private String TAG = "MainActivity";
     private  static String id;
     private static String uniqueID = null;
     private static  String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
+    private String buildingId;
 
     private synchronized static String getId(Context context) {
         if (uniqueID == null) {
@@ -80,21 +79,34 @@ class LocationUpdatesHelper {
             for (Location location : locationResult.getLocations()) {
                 //Log.d("MainActivity : ", "onLocationResult => latitude : " + location.getLatitude() + " longitude : " + location.getLongitude() + " altitude : " + location.getAltitude());
 
-                String latitude = Double.toString(location.getLatitude());
-                String longitude = Double.toString(location.getLongitude());
-                String altitude = Double.toString(location.getAltitude());
+                String latitude = "";
+                String longitude = "";
+                String altitude = "";
 
-                Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
-                locationUpdatesServiceIntent.putExtra("latitude", latitude);
-                locationUpdatesServiceIntent.putExtra("longitude", longitude);
-                locationUpdatesServiceIntent.putExtra("altitude", altitude);
-                ContextCompat.startForegroundService(context, locationUpdatesServiceIntent);
+                if (!(buildingId.equals("-1"))) {
+                    latitude = Double.toString(location.getLatitude());
+                    longitude = Double.toString(location.getLongitude());
+                    altitude = Double.toString(location.getAltitude());
+                    Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
+                    locationUpdatesServiceIntent.putExtra("latitude", latitude);
+                    locationUpdatesServiceIntent.putExtra("longitude", longitude);
+                    locationUpdatesServiceIntent.putExtra("altitude", altitude);
+                    locationUpdatesServiceIntent.putExtra("buildingId", buildingId);
+
+                    ContextCompat.startForegroundService(context, locationUpdatesServiceIntent);
+                }
+                else {
+                    latitude = "0";
+                    longitude = "0";
+                    altitude = "0";
+                }
 
                 HashMap<String, String> map = new HashMap<>();
 
                 map.put("latitude", latitude);
                 map.put("longitude", longitude);
                 map.put("altitude", altitude);
+                map.put("buildingId", buildingId);
 
                 Call<Void> call = retrofitInterface.executeUpdateLocation(id, map);
 
@@ -112,7 +124,7 @@ class LocationUpdatesHelper {
 
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        Log.d(TAG, "Failed to send location to server...");
+                        Log.d(TAG, "Failed to send location to server..." + t.getMessage());
                     }
                 });
 
@@ -120,7 +132,7 @@ class LocationUpdatesHelper {
         }
     };
 
-    void checkSettingsAndStartLocationUpdates() {
+    void checkSettingsAndStartLocationUpdates(final String buildingId) {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
                 .build();
@@ -131,7 +143,7 @@ class LocationUpdatesHelper {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 // Settings of device are satisfied and we can start location updates
-                startLocationUpdates();
+                startLocationUpdates(buildingId);
             }
         });
         locationSettingsResponseTask.addOnFailureListener(new OnFailureListener() {
@@ -152,12 +164,10 @@ class LocationUpdatesHelper {
         });
     }
 
-    private void startLocationUpdates() {
+    private void startLocationUpdates(String buildingId) {
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        this.buildingId = buildingId;
+        retrofit = RetrofitClientInstance.getRetrofitInstance();
 
         retrofitInterface = retrofit.create(RetrofitInterface.class);
 

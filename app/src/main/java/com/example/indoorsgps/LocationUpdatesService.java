@@ -5,10 +5,17 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import java.util.HashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.indoorsgps.NotificationHelper.CHANNEL_ID;
 
@@ -33,6 +40,9 @@ public class LocationUpdatesService extends Service {
         // Called every time we start service
 
         String locationContent = "Getting location updates...";
+        String buildingId = "-1";
+        if (intent.hasExtra("buildingId"))
+            buildingId = intent.getStringExtra("buildingId");
         if (intent.hasExtra("latitude") && intent.hasExtra("longitude") && intent.hasExtra("altitude"))
         {
             String latitude = intent.getStringExtra("latitude");
@@ -41,7 +51,7 @@ public class LocationUpdatesService extends Service {
 
             locationContent = "Latitude : " + latitude + "\nLongitude : " + longitude + "\nAltitude : " + altitude;
 
-            sendLocalBroadcast(latitude, longitude, altitude);
+            sendLocalBroadcast(latitude, longitude, altitude, buildingId);
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
@@ -58,6 +68,8 @@ public class LocationUpdatesService extends Service {
 
         startForeground(1, notification);
 
+        locationUpdatesHelper.checkSettingsAndStartLocationUpdates(buildingId);
+
         if (intent.getAction() != null && intent.getAction().equals("STOP_FOREGROUND_SERVICE")) {
             locationUpdatesHelper.stopLocationUpdates();
             stopForeground(true);
@@ -65,16 +77,15 @@ public class LocationUpdatesService extends Service {
             return START_NOT_STICKY;
         }
 
-        locationUpdatesHelper.checkSettingsAndStartLocationUpdates();
-
         return START_STICKY;
     }
 
-    private void sendLocalBroadcast(String latitude, String longitude, String altitude) {
+    private void sendLocalBroadcast(String latitude, String longitude, String altitude, String buildingId) {
         Intent locIntent = new Intent("newLocationUpdate");
         locIntent.putExtra("latitude", latitude);
         locIntent.putExtra("longitude", longitude);
         locIntent.putExtra("altitude", altitude);
+        locIntent.putExtra("buildingId", buildingId);
         LocalBroadcastManager.getInstance(this).sendBroadcast(locIntent);
     }
 

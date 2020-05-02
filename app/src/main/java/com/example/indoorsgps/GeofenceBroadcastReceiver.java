@@ -27,8 +27,6 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
         // an Intent broadcast.
         //Toast.makeText(context, "Geofence triggered...", Toast.LENGTH_SHORT).show();
 
-        NotificationHelper notificationHelper = new NotificationHelper();
-
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
 
         if (geofencingEvent.hasError()) {
@@ -38,8 +36,10 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
         List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
 
+        String id = "";
         for (Geofence geofence : geofenceList) {
             Log.d(TAG, "onReceive : " + geofence.getRequestId());
+            id = geofence.getRequestId();
         }
 
         // Get trigerring location
@@ -49,30 +49,34 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
+                Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER", Toast.LENGTH_SHORT).show();
                 // Start notification service
-                startLocationUpdatesService(context);
+                startLocationUpdatesService(context, id);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
+                Log.d(TAG, "GEOFENCE_TRANSITION_DWELL");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_EXIT:
+                Log.d(TAG, "GEOFENCE_TRANSITION_EXIT");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT", Toast.LENGTH_SHORT).show();
                 // Stop notification service
-                stopLocationUpdatesService(context);
+                stopLocationUpdatesService(context, "-1");
                 break;
         }
 
     }
 
-    public void startLocationUpdatesService(Context context) {
+    public void startLocationUpdatesService(Context context, String geofenceId) {
         Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
+        locationUpdatesServiceIntent.putExtra("buildingId", geofenceId);
         ContextCompat.startForegroundService(context, locationUpdatesServiceIntent); // starts service when the app is in background service
     }
 
-    public void stopLocationUpdatesService(Context context) {
+    public void stopLocationUpdatesService(Context context, String geofenceId) {
         Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
         locationUpdatesServiceIntent.setAction(ACTION_STOP_FOREGROUND_SERVICE);
         ContextCompat.startForegroundService(context, locationUpdatesServiceIntent);

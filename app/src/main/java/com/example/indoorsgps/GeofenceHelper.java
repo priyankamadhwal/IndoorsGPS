@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 
@@ -11,6 +12,8 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingRequest;
+
+import java.util.List;
 
 public class GeofenceHelper extends ContextWrapper {
 
@@ -21,14 +24,15 @@ public class GeofenceHelper extends ContextWrapper {
         super(base);
     }
 
-    public GeofencingRequest getGeofencingRequest(Geofence geofence) {
+    public GeofencingRequest getGeofencingRequest(List<Geofence> geofences) {
         return new GeofencingRequest.Builder()
-                .addGeofence(geofence)          // We can add a list here
+                .addGeofences(geofences)
                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
                 .build();
     }
 
     public Geofence getGeofence(String ID, double latitude, double longitude, float radius, int transitionTypes) {
+
         return new Geofence.Builder()
                 .setCircularRegion(latitude, longitude, radius)
                 .setRequestId(ID)
