@@ -5,19 +5,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import java.util.HashMap;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.example.indoorsgps.NotificationHelper.CHANNEL_ID;
 
 public class LocationUpdatesService extends Service {
 
@@ -71,6 +61,7 @@ public class LocationUpdatesService extends Service {
         locationUpdatesHelper.checkSettingsAndStartLocationUpdates(buildingId);
 
         if (intent.getAction() != null && intent.getAction().equals("STOP_FOREGROUND_SERVICE")) {
+            sendLocalBroadcast("0", "0", "0", "-1");
             locationUpdatesHelper.stopLocationUpdates();
             stopForeground(true);
             stopSelf();

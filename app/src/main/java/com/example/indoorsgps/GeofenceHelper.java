@@ -4,9 +4,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
@@ -18,6 +15,7 @@ import java.util.List;
 public class GeofenceHelper extends ContextWrapper {
 
     private static final String TAG = "GeofenceHelper";
+
     PendingIntent pendingIntent;
 
     public GeofenceHelper(Context base) {
@@ -44,11 +42,15 @@ public class GeofenceHelper extends ContextWrapper {
 
     public PendingIntent getPendingIntent() {
 
+        // Reuse the PendingIntent if we already have it.
         if (pendingIntent != null) {
             return pendingIntent;
         }
 
+
         Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
+
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addGeofences() and removeGeofences().
         pendingIntent = PendingIntent.getBroadcast(this, 2607, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return pendingIntent;
     }

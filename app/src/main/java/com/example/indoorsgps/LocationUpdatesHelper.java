@@ -31,18 +31,35 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 class LocationUpdatesHelper {
+
+    private final String TAG = "LocationUpdatesHelper";
+
     private Context context;
 
-    FusedLocationProviderClient fusedLocationProviderClient;
-    LocationRequest locationRequest;
+    private FusedLocationProviderClient fusedLocationProviderClient;
+    private LocationRequest locationRequest;
 
-    private Retrofit retrofit;
-    private RetrofitInterface retrofitInterface;
-    private String TAG = "MainActivity";
+
     private  static String id;
     private static String uniqueID = null;
     private static  String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
+    private String latitude = "";
+    private String longitude = "";
+    private String altitude = "";
     private String buildingId;
+
+    LocationUpdatesHelper(Context context) {
+        this.context = context;
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(1000);
+        locationRequest.setFastestInterval(500);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        id = getId(context);
+    }
 
     private synchronized static String getId(Context context) {
         if (uniqueID == null) {
@@ -58,18 +75,6 @@ class LocationUpdatesHelper {
         return uniqueID;
     }
 
-    LocationUpdatesHelper(Context context) {
-        this.context = context;
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(500);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        id = getId(context);
-    }
-
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -77,23 +82,14 @@ class LocationUpdatesHelper {
                 return;
             }
             for (Location location : locationResult.getLocations()) {
-                //Log.d("MainActivity : ", "onLocationResult => latitude : " + location.getLatitude() + " longitude : " + location.getLongitude() + " altitude : " + location.getAltitude());
-
-                String latitude = "";
-                String longitude = "";
-                String altitude = "";
 
                 if (!(buildingId.equals("-1"))) {
                     latitude = Double.toString(location.getLatitude());
                     longitude = Double.toString(location.getLongitude());
                     altitude = Double.toString(location.getAltitude());
-                    Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
-                    locationUpdatesServiceIntent.putExtra("latitude", latitude);
-                    locationUpdatesServiceIntent.putExtra("longitude", longitude);
-                    locationUpdatesServiceIntent.putExtra("altitude", altitude);
-                    locationUpdatesServiceIntent.putExtra("buildingId", buildingId);
 
-                    ContextCompat.startForegroundService(context, locationUpdatesServiceIntent);
+                    // Start location updates service
+                    ContextCompat.startForegroundService(context, getLocationUpdatesServiceIntent());
                 }
                 else {
                     latitude = "0";
@@ -101,36 +97,50 @@ class LocationUpdatesHelper {
                     altitude = "0";
                 }
 
-                HashMap<String, String> map = new HashMap<>();
-
-                map.put("latitude", latitude);
-                map.put("longitude", longitude);
-                map.put("altitude", altitude);
-                map.put("buildingId", buildingId);
-
-                Call<Void> call = retrofitInterface.executeUpdateLocation(id, map);
-
-                call.enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-
-                        if (response.code() == 200) {
-                            Log.d(TAG, "Location successfully saved in db...");
-                        } else if (response.code() == 400) {
-                            Log.d(TAG, "Failed to save location in db...");
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        Log.d(TAG, "Failed to send location to server..." + t.getMessage());
-                    }
-                });
+                updateLocationInDB();
 
             }
         }
     };
+
+    private Intent getLocationUpdatesServiceIntent() {
+        Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
+        locationUpdatesServiceIntent.putExtra("latitude", latitude);
+        locationUpdatesServiceIntent.putExtra("longitude", longitude);
+        locationUpdatesServiceIntent.putExtra("altitude", altitude);
+        locationUpdatesServiceIntent.putExtra("buildingId", buildingId);
+        return locationUpdatesServiceIntent;
+    }
+
+    private void updateLocationInDB() {
+        Retrofit retrofit = RetrofitClientInstance.getRetrofitInstance();
+        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+
+        HashMap<String, String> map = new HashMap<>();
+
+        map.put("latitude", latitude);
+        map.put("longitude", longitude);
+        map.put("altitude", altitude);
+        map.put("buildingId", buildingId);
+
+        Call<Void> call = retrofitInterface.executeUpdateLocation(id, map);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.code() == 200) {
+                    Log.d(TAG, "Location successfully saved in db...");
+                } else if (response.code() == 400) {
+                    Log.d(TAG, "Failed to save location in db...");
+                }
+
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d(TAG, "Failed to send location to server..." + t.getMessage());
+            }
+        });
+    }
 
     void checkSettingsAndStartLocationUpdates(final String buildingId) {
         LocationSettingsRequest request = new LocationSettingsRequest.Builder()
@@ -165,12 +175,7 @@ class LocationUpdatesHelper {
     }
 
     private void startLocationUpdates(String buildingId) {
-
         this.buildingId = buildingId;
-        retrofit = RetrofitClientInstance.getRetrofitInstance();
-
-        retrofitInterface = retrofit.create(RetrofitInterface.class);
-
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 

@@ -3,7 +3,6 @@ package com.example.indoorsgps;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
@@ -57,10 +56,6 @@ public class MainActivity extends AppCompatActivity {
     private GeofencingClient geofencingClient;
     private GeofenceHelper geofenceHelper;
 
-    private Retrofit retrofit;
-    private RetrofitInterface retrofitInterface;
-    private String BASE_URL = "http://192.168.0.104:3000";
-
     private BroadcastReceiver locationUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -96,10 +91,10 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            requestPermissions();
+            checkPermissions();
     }
 
-    private void requestPermissions() {
+    private void checkPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             checkBackgroundAndFineLocationPermssions();
         else
@@ -117,8 +112,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
-                            // Add geofence
-                            addGeofences();
+                            // Add geofences
+                            addGeofencesFromDB();
                         }
 
                         // check for permanent denial of any permission
@@ -145,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         // permission is granted
                         // Add geofence
-                        addGeofences();
+                        addGeofencesFromDB();
                     }
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
@@ -202,10 +197,10 @@ public class MainActivity extends AppCompatActivity {
         buildingIdView.setText("Building ID : " + buildingId);
     }
 
-    private void addGeofences() {
+    private void addGeofencesFromDB() {
 
-        retrofit = RetrofitClientInstance.getRetrofitInstance();
-        retrofitInterface = retrofit.create(RetrofitInterface.class);
+        Retrofit retrofit = RetrofitClientInstance.getRetrofitInstance();
+        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
         Call<List<BuildingModel>> call = retrofitInterface.executeGetAllBuildingsInfo();
 
@@ -213,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<BuildingModel>> call, Response<List<BuildingModel>> response) {
                 if (!response.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, "Getting building info- Failure code " + response.code(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Getting building info- Failure code " + response.code());
                     return;
                 }
 
@@ -226,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                Toast.makeText(MainActivity.this, "Geofences added...", Toast.LENGTH_SHORT).show();
                                 Log.d(TAG, "onSuccess : Geofences added...");
                             }
                         })
@@ -241,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<BuildingModel>> call, Throwable t) {
-
+                Log.d(TAG, "Failure getting building from db :" + t.getMessage());
             }
         });
     }
