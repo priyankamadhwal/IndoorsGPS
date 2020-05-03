@@ -17,7 +17,7 @@ Android Studio, Git
 ### Installation
 To import this project into Android Studio, proceed as follows:
 
-1. Click **File** > **New** > **Project from Version Control**.
+1. Click **File** > **New** > **Project from Version Control** > **Git**.
 2. Enter URL: https://github.com/priyankamadhwal/IndoorsGPS.git
 3. Click **Clone**.
 5. [Build and run the app](https://developer.android.com/studio/run).
