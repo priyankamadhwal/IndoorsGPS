@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -56,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
     private GeofencingClient geofencingClient;
     private GeofenceHelper geofenceHelper;
 
+    private SharedPreferences sharedPreferences;
+    private final String PREF_GEOFENCES = "PREF_GEOFENCES";
+
     private BroadcastReceiver locationUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -79,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeofenceHelper(this);
+
+        sharedPreferences = this.getSharedPreferences(PREF_GEOFENCES, Context.MODE_PRIVATE);
 
         // Register a local broadcast manager to receive location updates
         // Receive intents with actions named "newLocationUpdate"
@@ -245,15 +251,31 @@ public class MainActivity extends AppCompatActivity {
     private List <Geofence> getGeofencesList(List <BuildingModel> buildings) {
         List <Geofence> geofencesList = new ArrayList<Geofence>();
         for (BuildingModel building : buildings) {
-            Geofence geofence = geofenceHelper.getGeofence(
-                    building.getId(),
-                    Double.parseDouble(building.getLatitude()),
-                    Double.parseDouble(building.getLongitude()),
-                    Float.parseFloat(building.getRadius()),
-                    Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT
-            );
-            geofencesList.add(geofence);
+            if (!checkGeofenceExists(building.getId())) {
+                Geofence geofence = geofenceHelper.getGeofence(
+                        building.getId(),
+                        Double.parseDouble(building.getLatitude()),
+                        Double.parseDouble(building.getLongitude()),
+                        Float.parseFloat(building.getRadius()),
+                        Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT
+                );
+                geofencesList.add(geofence);
+            }
+            else {
+                saveGeofence(building.getId());
+            }
         }
         return geofencesList;
+    }
+
+    private boolean checkGeofenceExists(String geofenceId) {
+        // Returns true if exists, else returns false
+        return (sharedPreferences.getString(geofenceId, null) != null);
+    }
+
+    private void saveGeofence(String geofenceId) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(geofenceId, "1");
+        editor.apply();
     }
 }
