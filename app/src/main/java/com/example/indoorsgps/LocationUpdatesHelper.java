@@ -8,7 +8,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -39,7 +39,6 @@ class LocationUpdatesHelper {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
 
-
     private  static String id;
     private static String uniqueID = null;
     private static  String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
@@ -47,6 +46,8 @@ class LocationUpdatesHelper {
     private String longitude = "";
     private String altitude = "";
     private String buildingId;
+
+    private NotificationHelper notificationHelper;
 
     LocationUpdatesHelper(Context context) {
         this.context = context;
@@ -59,6 +60,8 @@ class LocationUpdatesHelper {
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         id = getId(context);
+
+        notificationHelper = new NotificationHelper();
     }
 
     private synchronized static String getId(Context context) {
@@ -78,38 +81,32 @@ class LocationUpdatesHelper {
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
-            if (locationResult == null) {
-                return;
-            }
-            for (Location location : locationResult.getLocations()) {
-
-                if (!(buildingId.equals("-1"))) {
-                    latitude = Double.toString(location.getLatitude());
-                    longitude = Double.toString(location.getLongitude());
-                    altitude = Double.toString(location.getAltitude());
-
-                    // Start location updates service
-                    ContextCompat.startForegroundService(context, getLocationUpdatesServiceIntent());
-                }
-                else {
-                    latitude = "0";
-                    longitude = "0";
-                    altitude = "0";
-                }
-
-                updateLocationInDB();
-
-            }
+            super.onLocationResult(locationResult);
+            onNewLocation(locationResult.getLastLocation());
         }
     };
 
-    private Intent getLocationUpdatesServiceIntent() {
-        Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
-        locationUpdatesServiceIntent.putExtra("latitude", latitude);
-        locationUpdatesServiceIntent.putExtra("longitude", longitude);
-        locationUpdatesServiceIntent.putExtra("altitude", altitude);
-        locationUpdatesServiceIntent.putExtra("buildingId", buildingId);
-        return locationUpdatesServiceIntent;
+    private void onNewLocation(Location location) {
+        if (!(buildingId.equals("-1"))) {
+            latitude = Double.toString(location.getLatitude());
+            longitude = Double.toString(location.getLongitude());
+            altitude = Double.toString(location.getAltitude());
+
+            // Update notification
+            notificationHelper.updateNotification(context, latitude, longitude, altitude);
+        }
+        else {
+            latitude = "0";
+            longitude = "0";
+            altitude = "0";
+            stopLocationUpdates();
+        }
+
+        // Update location in DB
+        updateLocationInDB();
+
+        // Send local broadcast
+        sendLocalBroadcast();
     }
 
     private void updateLocationInDB() {
@@ -140,6 +137,15 @@ class LocationUpdatesHelper {
                 Log.d(TAG, "Failed to send location to server..." + t.getMessage());
             }
         });
+    }
+
+    private void sendLocalBroadcast() {
+        Intent locIntent = new Intent("newLocationUpdate");
+        locIntent.putExtra("latitude", latitude);
+        locIntent.putExtra("longitude", longitude);
+        locIntent.putExtra("altitude", altitude);
+        locIntent.putExtra("buildingId", buildingId);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(locIntent);
     }
 
     void checkSettingsAndStartLocationUpdates(final String buildingId) {

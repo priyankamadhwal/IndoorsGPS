@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
@@ -47,5 +48,30 @@ public class NotificationHelper extends Application {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();
+    }
+
+    public Notification createNotification(Context context, String content) {
+        PendingIntent pendingIntent = PendingIntent.getActivity(context,
+                0,
+                new Intent(context, MainActivity.class),
+                0);
+
+        Notification notification = sendNotification(
+                context,
+                "Location Updates Service",
+                content,
+                pendingIntent
+        );
+        return notification;
+    }
+
+    public void updateNotification(Context context, String latitude, String longitude, String altitude) {
+        String content = "Latitude : " + latitude + "\nLongitude : " + longitude + "\nAltitude : " + altitude;
+
+        Notification notification = createNotification(context, content);
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        assert notificationManager != null;
+        notificationManager.notify(1, notification);
     }
 }
