@@ -1,10 +1,8 @@
 package com.example.indoorsgps;
 
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,16 +16,11 @@ import java.util.List;
 public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = "GeofenceBroadcastReceiv";
-    private final String ACTION_START_FOREGROUND_SERVICE = "START_FOREGROUND_SERVICE";
-    private final String ACTION_STOP_FOREGROUND_SERVICE = "STOP_FOREGROUND_SERVICE";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // TODO: This method is called when the BroadcastReceiver is receiving
-        // an Intent broadcast.
-        //Toast.makeText(context, "Geofence triggered...", Toast.LENGTH_SHORT).show();
 
-        NotificationHelper notificationHelper = new NotificationHelper();
+        //Toast.makeText(context, "Geofence triggered...", Toast.LENGTH_SHORT).show();
 
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
 
@@ -38,8 +31,11 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
         List<Geofence> geofenceList = geofencingEvent.getTriggeringGeofences();
 
+        // In case of overlapping geofences, choose the last one in the list
+        String id = "";
         for (Geofence geofence : geofenceList) {
             Log.d(TAG, "onReceive : " + geofence.getRequestId());
+            id = geofence.getRequestId();
         }
 
         // Get trigerring location
@@ -49,32 +45,36 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
 
         switch (transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
+                Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER", Toast.LENGTH_SHORT).show();
-                // Start notification service
-                startLocationUpdatesService(context);
+                // Start location updates service
+                startLocationUpdatesService(context, id);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
+                Log.d(TAG, "GEOFENCE_TRANSITION_DWELL");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_EXIT:
+                Log.d(TAG, "GEOFENCE_TRANSITION_EXIT");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT", Toast.LENGTH_SHORT).show();
-                // Stop notification service
+                // Stop location updates service
                 stopLocationUpdatesService(context);
                 break;
         }
 
     }
 
-    public void startLocationUpdatesService(Context context) {
+    private void startLocationUpdatesService(Context context, String geofenceId) {
         Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
-        ContextCompat.startForegroundService(context, locationUpdatesServiceIntent); // starts service when the app is in background service
+        locationUpdatesServiceIntent.putExtra("buildingId", geofenceId);
+        ContextCompat.startForegroundService(context, locationUpdatesServiceIntent);
     }
 
-    public void stopLocationUpdatesService(Context context) {
+    private void stopLocationUpdatesService(Context context) {
         Intent locationUpdatesServiceIntent = new Intent(context, LocationUpdatesService.class);
-        locationUpdatesServiceIntent.setAction(ACTION_STOP_FOREGROUND_SERVICE);
+        locationUpdatesServiceIntent.setAction("STOP_FOREGROUND_SERVICE");
         ContextCompat.startForegroundService(context, locationUpdatesServiceIntent);
     }
 }

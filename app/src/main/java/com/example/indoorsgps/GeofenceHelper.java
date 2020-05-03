@@ -5,30 +5,32 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 
-import androidx.core.content.ContextCompat;
-
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingRequest;
 
+import java.util.List;
+
 public class GeofenceHelper extends ContextWrapper {
 
     private static final String TAG = "GeofenceHelper";
+
     PendingIntent pendingIntent;
 
     public GeofenceHelper(Context base) {
         super(base);
     }
 
-    public GeofencingRequest getGeofencingRequest(Geofence geofence) {
+    public GeofencingRequest getGeofencingRequest(List<Geofence> geofences) {
         return new GeofencingRequest.Builder()
-                .addGeofence(geofence)          // We can add a list here
+                .addGeofences(geofences)
                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
                 .build();
     }
 
     public Geofence getGeofence(String ID, double latitude, double longitude, float radius, int transitionTypes) {
+
         return new Geofence.Builder()
                 .setCircularRegion(latitude, longitude, radius)
                 .setRequestId(ID)
@@ -40,11 +42,15 @@ public class GeofenceHelper extends ContextWrapper {
 
     public PendingIntent getPendingIntent() {
 
+        // Reuse the PendingIntent if we already have it.
         if (pendingIntent != null) {
             return pendingIntent;
         }
 
+
         Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
+
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addGeofences() and removeGeofences().
         pendingIntent = PendingIntent.getBroadcast(this, 2607, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return pendingIntent;
     }
