@@ -31,7 +31,8 @@ To import this project into Android Studio, proceed as follows:
 - [x] Getting location updates when application is in background or killed (Service)
 - [x] Updating UI from Service using a Broadcast Reciever
 - [x] Connecting to server using an HTTP Client
-- [ ] Adding Geofencing feature _(currently working on this)_
+- [x] Adding Geofence for a single building
+- [x] Adding Geofences for multiple buildings (stored in DB)
 - [ ] Authentication
 
 ### Development Decisions
