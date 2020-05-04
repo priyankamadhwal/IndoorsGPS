@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            updateUI(intent.getStringExtra("latitude"),
-                    intent.getStringExtra("longitude"),
-                    intent.getStringExtra("altitude"),
+            updateUI(intent.getDoubleExtra("latitude", 0),
+                    intent.getDoubleExtra("longitude", 0),
+                    intent.getDoubleExtra("altitude", 0),
                     intent.getStringExtra("buildingId"));
         }
     };
@@ -81,10 +81,10 @@ public class MainActivity extends AppCompatActivity {
         altitudeView = findViewById(R.id.altitude);
         buildingIdView = findViewById(R.id.buildingId);
 
+        sharedPreferences = this.getSharedPreferences(PREF_GEOFENCES, Context.MODE_PRIVATE);
+
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeofenceHelper(this);
-
-        sharedPreferences = this.getSharedPreferences(PREF_GEOFENCES, Context.MODE_PRIVATE);
 
         // Register a local broadcast manager to receive location updates
         // Receive intents with actions named "newLocationUpdate"
@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void updateUI(String latitude, String longitude, String altitude, String buildingId) {
+    private void updateUI(double latitude, double longitude, double altitude, String buildingId) {
         latitudeView.setText("Latitude : " + latitude);
         longitudeView.setText("Longitude : " + longitude);
         altitudeView.setText("Altitude : " + altitude);
@@ -221,24 +221,25 @@ public class MainActivity extends AppCompatActivity {
                 List <BuildingModel> buildings = response.body();
                 List <Geofence> geofencesList = getGeofencesList(buildings);
 
-                GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofencesList);
-                PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
-                geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(MainActivity.this, "Geofences added...", Toast.LENGTH_SHORT).show();
-                                Log.d(TAG, "onSuccess : Geofences added...");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                String errorMessage = geofenceHelper.getErrorString(e);
-                                Log.d(TAG, "onFailure : " + errorMessage);
-                            }
-                        });
-
+                if (geofencesList.size() > 0) {
+                    GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofencesList);
+                    PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
+                    geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Toast.makeText(MainActivity.this, "Geofences added...", Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "onSuccess : Geofences added...");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    String errorMessage = geofenceHelper.getErrorString(e);
+                                    Log.d(TAG, "onFailure : " + errorMessage);
+                                }
+                            });
+                }
             }
 
             @Override
@@ -254,14 +255,12 @@ public class MainActivity extends AppCompatActivity {
             if (!checkGeofenceExists(building.getId())) {
                 Geofence geofence = geofenceHelper.getGeofence(
                         building.getId(),
-                        Double.parseDouble(building.getLatitude()),
-                        Double.parseDouble(building.getLongitude()),
-                        Float.parseFloat(building.getRadius()),
+                        building.getLatitude(),
+                        building.getLongitude(),
+                        building.getRadius(),
                         Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT
                 );
                 geofencesList.add(geofence);
-            }
-            else {
                 saveGeofence(building.getId());
             }
         }
@@ -270,12 +269,13 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkGeofenceExists(String geofenceId) {
         // Returns true if exists, else returns false
-        return (sharedPreferences.getString(geofenceId, null) != null);
+        Log.d(TAG, "Geofence id...." + geofenceId);
+        return (sharedPreferences.getBoolean(geofenceId, false));
     }
 
     private void saveGeofence(String geofenceId) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(geofenceId, "1");
+        editor.putBoolean(geofenceId, true);
         editor.apply();
     }
 }

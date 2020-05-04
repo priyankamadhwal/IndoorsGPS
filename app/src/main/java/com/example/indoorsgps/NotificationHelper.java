@@ -65,7 +65,7 @@ public class NotificationHelper extends Application {
         return notification;
     }
 
-    public void updateNotification(Context context, String latitude, String longitude, String altitude) {
+    public void updateNotification(Context context, double latitude, double longitude, double altitude) {
         String content = "Latitude : " + latitude + "\nLongitude : " + longitude + "\nAltitude : " + altitude;
 
         Notification notification = createNotification(context, content);

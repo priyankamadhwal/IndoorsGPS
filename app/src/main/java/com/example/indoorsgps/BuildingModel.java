@@ -3,23 +3,23 @@ package com.example.indoorsgps;
 public class BuildingModel {
 
     private String id;
-    private String latitude;
-    private String longitude;
-    private String radius;
+    private double latitude;
+    private double longitude;
+    private float radius;
 
     public String getId() {
         return id;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public String getRadius() {
+    public float getRadius() {
         return radius;
     }
 }

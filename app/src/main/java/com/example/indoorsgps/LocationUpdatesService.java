@@ -30,7 +30,6 @@ public class LocationUpdatesService extends Service {
         if (intent.hasExtra("buildingId"))
             buildingId = intent.getStringExtra("buildingId");
 
-
         startForeground(1, notificationHelper.createNotification(this, "Getting location updates..."));
 
         locationUpdatesHelper.checkSettingsAndStartLocationUpdates(buildingId);

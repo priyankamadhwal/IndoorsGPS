@@ -22,7 +22,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 import retrofit2.Call;
@@ -42,9 +41,10 @@ class LocationUpdatesHelper {
     private  static String id;
     private static String uniqueID = null;
     private static  String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
-    private String latitude = "";
-    private String longitude = "";
-    private String altitude = "";
+
+    private double latitude;
+    private double longitude;
+    private double altitude;
     private String buildingId;
 
     private NotificationHelper notificationHelper;
@@ -88,17 +88,17 @@ class LocationUpdatesHelper {
 
     private void onNewLocation(Location location) {
         if (!(buildingId.equals("-1"))) {
-            latitude = Double.toString(location.getLatitude());
-            longitude = Double.toString(location.getLongitude());
-            altitude = Double.toString(location.getAltitude());
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            altitude = location.getAltitude();
 
             // Update notification
             notificationHelper.updateNotification(context, latitude, longitude, altitude);
         }
         else {
-            latitude = "0";
-            longitude = "0";
-            altitude = "0";
+            latitude = 0;
+            longitude = 0;
+            altitude = 0;
             stopLocationUpdates();
         }
 
@@ -113,14 +113,9 @@ class LocationUpdatesHelper {
         Retrofit retrofit = RetrofitClientInstance.getRetrofitInstance();
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
-        HashMap<String, String> map = new HashMap<>();
+        UserLocationModel userLocation = new UserLocationModel(latitude, longitude, altitude, buildingId);
 
-        map.put("latitude", latitude);
-        map.put("longitude", longitude);
-        map.put("altitude", altitude);
-        map.put("buildingId", buildingId);
-
-        Call<Void> call = retrofitInterface.executeUpdateLocation(id, map);
+        Call<Void> call = retrofitInterface.executeUpdateLocation(id, userLocation);
 
         call.enqueue(new Callback<Void>() {
             @Override
