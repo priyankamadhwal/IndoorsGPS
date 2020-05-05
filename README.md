@@ -33,7 +33,8 @@ To import this project into Android Studio, proceed as follows:
 - [x] Connecting to server using an HTTP Client
 - [x] Adding Geofence for a single building
 - [x] Adding Geofences for multiple buildings (stored in DB)
-- [ ] Authentication
+- [x] Authentication
+- [ ] UI Design
 
 ### Development Decisions
 *(Click to expand)*
