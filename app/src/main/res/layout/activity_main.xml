@@ -48,4 +48,13 @@
         android:text="Building ID"
         android:id="@+id/buildingId"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign out"
+        android:textSize="18sp"
+        android:id="@+id/signOutButton"
+        android:padding="5dp"
+        android:layout_margin="20dp" />
+
 </LinearLayout>

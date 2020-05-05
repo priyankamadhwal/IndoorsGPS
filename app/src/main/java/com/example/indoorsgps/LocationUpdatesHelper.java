@@ -2,7 +2,6 @@ package com.example.indoorsgps;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Looper;
 import android.util.Log;
@@ -10,6 +9,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -21,8 +21,6 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-
-import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,8 +37,6 @@ class LocationUpdatesHelper {
     private LocationRequest locationRequest;
 
     private  static String id;
-    private static String uniqueID = null;
-    private static  String PREF_UNIQUE_ID = "PREF_UNIQUE_ID";
 
     private double latitude;
     private double longitude;
@@ -59,23 +55,9 @@ class LocationUpdatesHelper {
         locationRequest.setFastestInterval(500);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        id = getId(context);
+        id = GoogleSignIn.getLastSignedInAccount(context).getId();
 
         notificationHelper = new NotificationHelper();
-    }
-
-    private synchronized static String getId(Context context) {
-        if (uniqueID == null) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_UNIQUE_ID, Context.MODE_PRIVATE);
-            uniqueID = sharedPreferences.getString(PREF_UNIQUE_ID, null);
-            if (uniqueID == null) {
-                uniqueID = UUID.randomUUID().toString();
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(PREF_UNIQUE_ID, uniqueID);
-                editor.apply();
-            }
-        }
-        return uniqueID;
     }
 
     private LocationCallback locationCallback = new LocationCallback() {

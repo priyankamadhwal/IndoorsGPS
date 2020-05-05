@@ -3,9 +3,11 @@ package com.example.indoorsgps;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -19,15 +21,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -53,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView longitudeView;
     private TextView altitudeView;
     private TextView buildingIdView;
+    private Button signOutButton;
 
     private GeofencingClient geofencingClient;
     private GeofenceHelper geofenceHelper;
@@ -80,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
         longitudeView = findViewById(R.id.longitude);
         altitudeView = findViewById(R.id.altitude);
         buildingIdView = findViewById(R.id.buildingId);
+
+        signOutButton = findViewById(R.id.signOutButton);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signOut();
+            }
+        });
 
         sharedPreferences = this.getSharedPreferences(PREF_GEOFENCES, Context.MODE_PRIVATE);
 
@@ -277,5 +295,31 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(geofenceId, true);
         editor.apply();
+    }
+
+    private void signOut() {
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient (MainActivity.this, GoogleSignInOptionsInstance.getGoogleSignInOptionsInstance(this));
+        googleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                stopLocationUpdatesService();
+                Intent intent = new Intent(MainActivity.this, SignInActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+    private void stopLocationUpdatesService() {
+        Intent locationUpdatesServiceIntent = new Intent(MainActivity.this, LocationUpdatesService.class);
+        locationUpdatesServiceIntent.setAction("STOP_FOREGROUND_SERVICE");
+        ContextCompat.startForegroundService(MainActivity.this, locationUpdatesServiceIntent);
+    }
+
+    private boolean isLocationUpdatesServiceRunning() {
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (service.service.getClassName().equals("LocationUpdatesService"))
+                return true;
+        }
+        return false;
     }
 }
