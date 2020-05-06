@@ -114,8 +114,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             checkPermissions();
+         */
     }
 
     private void checkPermissions() {
@@ -246,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Toast.makeText(MainActivity.this, "Geofences added...", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(MainActivity.this, "Geofences added...", Toast.LENGTH_SHORT).show();
                                     Log.d(TAG, "onSuccess : Geofences added...");
                                 }
                             })
@@ -270,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
     private List <Geofence> getGeofencesList(List <BuildingModel> buildings) {
         List <Geofence> geofencesList = new ArrayList<Geofence>();
         for (BuildingModel building : buildings) {
-            if (!checkGeofenceExists(building.getId())) {
+            //if (!checkGeofenceExists(building.getId())) {
                 Geofence geofence = geofenceHelper.getGeofence(
                         building.getId(),
                         building.getLatitude(),
@@ -279,15 +281,14 @@ public class MainActivity extends AppCompatActivity {
                         Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT
                 );
                 geofencesList.add(geofence);
-                saveGeofence(building.getId());
-            }
+                //saveGeofence(building.getId());
+            //}
         }
         return geofencesList;
     }
 
     private boolean checkGeofenceExists(String geofenceId) {
         // Returns true if exists, else returns false
-        Log.d(TAG, "Geofence id...." + geofenceId);
         return (sharedPreferences.getBoolean(geofenceId, false));
     }
 
@@ -298,28 +299,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signOut() {
+        removeGeofences();
+        stopLocationUpdatesService();
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient (MainActivity.this, GoogleSignInOptionsInstance.getGoogleSignInOptionsInstance(this));
         googleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                stopLocationUpdatesService();
                 Intent intent = new Intent(MainActivity.this, SignInActivity.class);
                 startActivity(intent);
             }
         });
     }
+    private void removeGeofences() {
+        geofencingClient.removeGeofences(geofenceHelper.getPendingIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Geofences removed...");
+                        Toast.makeText(getApplicationContext(), "Geofences removed...", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "Failed to remove geofences...");
+                        Toast.makeText(getApplicationContext(), "FAiled to remove geofences...", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
     private void stopLocationUpdatesService() {
         Intent locationUpdatesServiceIntent = new Intent(MainActivity.this, LocationUpdatesService.class);
         locationUpdatesServiceIntent.setAction("STOP_FOREGROUND_SERVICE");
         ContextCompat.startForegroundService(MainActivity.this, locationUpdatesServiceIntent);
-    }
-
-    private boolean isLocationUpdatesServiceRunning() {
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-            if (service.service.getClassName().equals("LocationUpdatesService"))
-                return true;
-        }
-        return false;
     }
 }

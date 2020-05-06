@@ -47,7 +47,6 @@ public class GeofenceHelper extends ContextWrapper {
             return pendingIntent;
         }
 
-
         Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
 
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addGeofences() and removeGeofences().

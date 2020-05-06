@@ -49,22 +49,19 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
                 Log.d(TAG, "GEOFENCE_TRANSITION_ENTER");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER", Toast.LENGTH_SHORT).show();
                 // Start location updates service
-
-                if (isSignedIn(context))
-                    startLocationUpdatesService(context, id);
+                startLocationUpdatesService(context, id);
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_DWELL:
                 Log.d(TAG, "GEOFENCE_TRANSITION_DWELL");
-                Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show();
                 break;
 
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 Log.d(TAG, "GEOFENCE_TRANSITION_EXIT");
                 Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT", Toast.LENGTH_SHORT).show();
                 // Stop location updates service
-                if (isSignedIn(context))
-                    stopLocationUpdatesService(context);
+                stopLocationUpdatesService(context);
                 break;
         }
 
