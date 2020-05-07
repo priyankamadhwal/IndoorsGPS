@@ -13,4 +13,8 @@
         <item name="colorPrimaryDark">@color/splashBackground</item>
     </style>
 
+    <style name="SignInTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>

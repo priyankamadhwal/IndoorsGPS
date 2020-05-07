@@ -55,7 +55,7 @@ class LocationUpdatesHelper {
         locationRequest.setFastestInterval(500);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        id = GoogleSignIn.getLastSignedInAccount(context).getId();
+        id = "";//GoogleSignIn.getLastSignedInAccount(context).getId();
 
         notificationHelper = new NotificationHelper();
     }

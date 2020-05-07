@@ -26,7 +26,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignInActivity"></activity>
+        <activity android:name=".SignInActivity"
+            android:theme="@style/SignInTheme"></activity>
 
         <receiver
             android:name=".GeofenceBroadcastReceiver"
@@ -39,6 +40,9 @@
             android:exported="true" />
 
         <activity android:name=".MainActivity"></activity>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -67,6 +68,8 @@ public class SignInActivity extends AppCompatActivity {
         googleSignInClient = GoogleSignIn.getClient (SignInActivity.this, GoogleSignInOptionsInstance.getGoogleSignInOptionsInstance(this));
 
         SignInButton googleSignInButton = findViewById(R.id.googleSignInButton);
+        TextView signInButtonText = (TextView) googleSignInButton.getChildAt(0);
+        signInButtonText.setText("Sign in with Google");
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
