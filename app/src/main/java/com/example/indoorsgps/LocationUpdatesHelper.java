@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -36,7 +37,8 @@ class LocationUpdatesHelper {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
 
-    private  static String id;
+    private String id;
+    private String name;
 
     private double latitude;
     private double longitude;
@@ -55,7 +57,8 @@ class LocationUpdatesHelper {
         locationRequest.setFastestInterval(500);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        id = "";//GoogleSignIn.getLastSignedInAccount(context).getId();
+        id = GoogleSignIn.getLastSignedInAccount(context).getId();
+        name = GoogleSignIn.getLastSignedInAccount(context).getDisplayName();
 
         notificationHelper = new NotificationHelper();
     }
@@ -95,7 +98,7 @@ class LocationUpdatesHelper {
         Retrofit retrofit = RetrofitClientInstance.getRetrofitInstance();
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
-        UserLocationModel userLocation = new UserLocationModel(latitude, longitude, altitude, buildingId);
+        UserLocationModel userLocation = new UserLocationModel(name, latitude, longitude, altitude, buildingId);
 
         Call<Void> call = retrofitInterface.executeUpdateLocation(id, userLocation);
 

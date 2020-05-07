@@ -23,6 +23,7 @@ public class GeofenceHelper extends ContextWrapper {
     }
 
     public GeofencingRequest getGeofencingRequest(List<Geofence> geofences) {
+
         return new GeofencingRequest.Builder()
                 .addGeofences(geofences)
                 .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
@@ -48,7 +49,6 @@ public class GeofenceHelper extends ContextWrapper {
         }
 
         Intent intent = new Intent(this, GeofenceBroadcastReceiver.class);
-
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addGeofences() and removeGeofences().
         pendingIntent = PendingIntent.getBroadcast(this, 2607, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return pendingIntent;

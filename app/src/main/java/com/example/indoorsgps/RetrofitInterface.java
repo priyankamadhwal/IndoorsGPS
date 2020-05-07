@@ -1,6 +1,5 @@
 package com.example.indoorsgps;
 
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;

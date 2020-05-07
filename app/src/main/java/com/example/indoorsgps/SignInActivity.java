@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -64,7 +63,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        // Build GoogleAPIClient with the Google Sign-In API and the above options.
+        // Build GoogleAPIClient with the Google Sign-In API and google sign in options.
         googleSignInClient = GoogleSignIn.getClient (SignInActivity.this, GoogleSignInOptionsInstance.getGoogleSignInOptionsInstance(this));
 
         SignInButton googleSignInButton = findViewById(R.id.googleSignInButton);
@@ -79,9 +78,6 @@ public class SignInActivity extends AppCompatActivity {
 
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeofenceHelper(this);
-
-        if (isSignedIn())
-            goToMainActivity();
 
         //refreshIdToken();
     }
@@ -123,7 +119,8 @@ public class SignInActivity extends AppCompatActivity {
             else
                 addGeofencesFromDB();
 
-        } catch (ApiException e) {
+        }
+        catch (ApiException e) {
             Log.w(TAG, "handleSignInResult:error", e);
         }
     }
@@ -247,6 +244,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onResponse(Call<List<BuildingModel>> call, Response<List<BuildingModel>> response) {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Getting building info- Failure code " + response.code());
+                    googleSignInClient.signOut();
                     return;
                 }
 
@@ -271,12 +269,7 @@ public class SignInActivity extends AppCompatActivity {
                                     String errorMessage = geofenceHelper.getErrorString(e);
                                     Log.d(TAG, "onFailure : " + errorMessage);
                                     Toast.makeText(SignInActivity.this, "onFailure : " + errorMessage, Toast.LENGTH_SHORT).show();
-                                    googleSignInClient.signOut().addOnCompleteListener(SignInActivity.this, new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            // Signed out
-                                        }
-                                    });
+                                    googleSignInClient.signOut();
                                 }
                             });
                 }
@@ -286,6 +279,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onFailure(Call<List<BuildingModel>> call, Throwable t) {
                 Log.d(TAG, "Failure getting building from db :" + t.getMessage());
                 Toast.makeText(SignInActivity.this, "Failure getting building from db :" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                googleSignInClient.signOut();
             }
         });
     }
@@ -306,9 +300,5 @@ public class SignInActivity extends AppCompatActivity {
             //}
         }
         return geofencesList;
-    }
-
-    private boolean isSignedIn() {
-        return (GoogleSignIn.getLastSignedInAccount(this) != null);
     }
 }
