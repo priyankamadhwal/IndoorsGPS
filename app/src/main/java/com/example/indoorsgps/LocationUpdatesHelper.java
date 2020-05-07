@@ -57,8 +57,13 @@ class LocationUpdatesHelper {
         locationRequest.setFastestInterval(500);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        id = GoogleSignIn.getLastSignedInAccount(context).getId();
-        name = GoogleSignIn.getLastSignedInAccount(context).getDisplayName();
+        try {
+            id = GoogleSignIn.getLastSignedInAccount(context).getId();
+            name = GoogleSignIn.getLastSignedInAccount(context).getDisplayName();
+        }
+        catch (NullPointerException e) {
+            Log.d(TAG, "Null pointer exception in id and name");
+        }
 
         notificationHelper = new NotificationHelper();
     }

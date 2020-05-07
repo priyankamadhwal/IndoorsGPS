@@ -138,7 +138,7 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity() {
-        Intent intent = new Intent(SignInActivity.this, MainActivity.class);
+        Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
         startActivity(intent);
     }
 
@@ -296,8 +296,6 @@ public class SignInActivity extends AppCompatActivity {
                     Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT
             );
             geofencesList.add(geofence);
-            //saveGeofence(building.getId());
-            //}
         }
         return geofencesList;
     }

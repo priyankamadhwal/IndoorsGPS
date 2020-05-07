@@ -5,5 +5,6 @@
     <color name="colorAccent">#03DAC5</color>
 
 <!--    <color name="splashBackground">#031e42</color>-->
-    <color name="splashBackground">#111d26</color>
+    <color name="background">#111d26</color>
+    <color name="backgroundSecondary">#e94466</color>
 </resources>
