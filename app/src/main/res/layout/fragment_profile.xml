@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:foregroundGravity="center"
+    tools:context=".ProfileFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/userIdView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="20dp"
+            android:textSize="12sp"
+            android:text="ID : 12345678" />
+
+        <ImageView
+            android:id="@+id/userProfileImageView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/profile_picture_placeholder" />
+
+        <TextView
+            android:id="@+id/userDisplayNameView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:text="User Name"
+            android:textColor="@color/background"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/userEmailView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="useremail@address.com" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            app:srcCompat="@drawable/ic_google_icon" />
+
+    </LinearLayout>
+</FrameLayout>
