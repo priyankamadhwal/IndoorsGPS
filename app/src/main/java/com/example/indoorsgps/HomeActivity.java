@@ -91,18 +91,25 @@ public class HomeActivity extends AppCompatActivity {
     private void updateHeader() {
         View headerView = navigationView.getHeaderView(0);
 
-        ImageView userProfileImageView = headerView.findViewById(R.id.userProfileImageView);
-        Uri userProfileImageUrl = GoogleSignIn.getLastSignedInAccount(this).getPhotoUrl();
-        Picasso.get().load(userProfileImageUrl.toString())
-                .placeholder(R.drawable.profile_picture_placeholder)
-                .error(R.drawable.profile_picture_placeholder)
-                .into(userProfileImageView);
 
-        TextView userDisplayNameView = headerView.findViewById(R.id.userDisplayNameView);
-        userDisplayNameView.setText(GoogleSignIn.getLastSignedInAccount(this).getDisplayName());
+        try {
+            ImageView userProfileImageView = headerView.findViewById(R.id.userProfileImageView);
+            String userProfileImageUrl = GoogleSignIn.getLastSignedInAccount(this).getPhotoUrl().toString();
+            userProfileImageUrl = userProfileImageUrl.replace("s96-c", "s400-c");
+            Picasso.get().load(userProfileImageUrl)
+                    .placeholder(R.drawable.profile_picture_placeholder)
+                    .error(R.drawable.profile_picture_placeholder)
+                    .into(userProfileImageView);
 
-        TextView userEmailView = headerView.findViewById(R.id.userEmailView);
-        userEmailView.setText(GoogleSignIn.getLastSignedInAccount(this).getEmail());
+            TextView userDisplayNameView = headerView.findViewById(R.id.userDisplayNameView);
+            userDisplayNameView.setText(GoogleSignIn.getLastSignedInAccount(this).getDisplayName());
+
+            TextView userEmailView = headerView.findViewById(R.id.userEmailView);
+            userEmailView.setText(GoogleSignIn.getLastSignedInAccount(this).getEmail());
+        }
+        catch (Exception e) {
+            Log.d(TAG, "Error in photo load");
+        }
     }
 
     private void bindSignOut() {

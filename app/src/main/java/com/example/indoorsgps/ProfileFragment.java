@@ -2,6 +2,7 @@ package com.example.indoorsgps;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.squareup.picasso.Picasso;
 
 public class ProfileFragment extends Fragment {
+
+    private final String TAG = "ProfileFragment";
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -32,21 +35,28 @@ public class ProfileFragment extends Fragment {
 
         // Update profile
 
-        TextView userIdView = root.findViewById(R.id.userIdView);
-        userIdView.setText("ID: " + GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getId());
+        try {
 
-        ImageView userProfileImageView = root.findViewById(R.id.userProfileImageView);
-        Uri userProfileImageUrl = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getPhotoUrl();
-        Picasso.get().load(userProfileImageUrl.toString())
-                .placeholder(R.drawable.profile_picture_placeholder)
-                .error(R.drawable.profile_picture_placeholder)
-                .into(userProfileImageView);
+            TextView userIdView = root.findViewById(R.id.userIdView);
+            userIdView.setText("ID: " + GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getId());
 
-        TextView userDisplayNameView = root.findViewById(R.id.userDisplayNameView);
-        userDisplayNameView.setText(GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getDisplayName());
+            ImageView userProfileImageView = root.findViewById(R.id.userProfileImageView);
+            String userProfileImageUrl = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getPhotoUrl().toString();
+            userProfileImageUrl = userProfileImageUrl.replace("s96-c", "s400-c");
+            Picasso.get().load(userProfileImageUrl)
+                    .placeholder(R.drawable.profile_picture_placeholder)
+                    .error(R.drawable.profile_picture_placeholder)
+                    .into(userProfileImageView);
 
-        TextView userEmailView = root.findViewById(R.id.userEmailView);
-        userEmailView.setText(GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getEmail());
+            TextView userDisplayNameView = root.findViewById(R.id.userDisplayNameView);
+            userDisplayNameView.setText(GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getDisplayName());
+
+            TextView userEmailView = root.findViewById(R.id.userEmailView);
+            userEmailView.setText(GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getEmail());
+        }
+        catch (Exception e) {
+            Log.d(TAG, "Error in getting account info");
+        }
 
         return root;
     }
