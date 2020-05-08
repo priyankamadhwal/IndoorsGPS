@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.acms.iexplore.R;
+import com.acms.iexplore.data.Constants;
 
 public class HomeFragment extends Fragment {
 
@@ -25,7 +26,7 @@ public class HomeFragment extends Fragment {
     private TextView buildingIdView;
     private WebView webView;
 
-    private final String WEBVIEW_URL = "http://192.168.0.104:4200";
+    private final String WEBVIEW_URL = "http://" + Constants.IP_ADDRESS + ":" + Constants.PORT_WEB;
 
     public HomeFragment() {
         // Required empty public constructor
