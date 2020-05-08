@@ -20,8 +20,6 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        //Toast.makeText(context, "Geofence triggered...", Toast.LENGTH_SHORT).show();
-
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
 
         if (geofencingEvent.hasError()) {
@@ -37,9 +35,6 @@ public class GeofenceBroadcastReceiver extends BroadcastReceiver {
             Log.d(TAG, "onReceive : " + geofence.getRequestId());
             id = geofence.getRequestId();
         }
-
-        // Get trigerring location
-        // Location location = geofencingEvent.getTriggeringLocation();
 
         int transitionType = geofencingEvent.getGeofenceTransition();
 

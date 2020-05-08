@@ -1,13 +1,13 @@
 package com.acms.iexplore.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -26,8 +26,10 @@ import retrofit2.Retrofit;
 public class BuildingsFragment extends Fragment {
 
     private final String TAG = "BuildingsFragment";
+
     private ListView geofencesList;
     private GeofencesListAdapter geofencesListAdapter;
+
     private List <BuildingModel> buildings;
 
     public BuildingsFragment() {
@@ -50,8 +52,32 @@ public class BuildingsFragment extends Fragment {
         geofencesList = root.findViewById(R.id.geofencesList);
         geofencesListAdapter = new GeofencesListAdapter();
 
-
         return root;
+    }
+
+    private void getBuildings() {
+
+        Retrofit retrofit = RetrofitClientInstance.getRetrofitInstance();
+        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+
+        Call<List<BuildingModel>> call = retrofitInterface.executeGetAllBuildingsInfo();
+
+        call.enqueue(new Callback<List<BuildingModel>>() {
+            @Override
+            public void onResponse(Call<List<BuildingModel>> call, Response<List<BuildingModel>> response) {
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Failed to fetch buildings, failure code: " + response.code(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                buildings = response.body();
+                geofencesList.setAdapter(geofencesListAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<BuildingModel>> call, Throwable t) {
+                Toast.makeText(getContext(), "Failed to fetch buildings from db: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     class GeofencesListAdapter extends BaseAdapter {
@@ -83,31 +109,5 @@ public class BuildingsFragment extends Fragment {
 
             return view;
         }
-    }
-
-    private void getBuildings() {
-
-        Retrofit retrofit = RetrofitClientInstance.getRetrofitInstance();
-        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
-
-        Call<List<BuildingModel>> call = retrofitInterface.executeGetAllBuildingsInfo();
-
-        call.enqueue(new Callback<List<BuildingModel>>() {
-            @Override
-            public void onResponse(Call<List<BuildingModel>> call, Response<List<BuildingModel>> response) {
-                if (!response.isSuccessful()) {
-                    Log.d(TAG, "Getting building info- Failure code " + response.code());
-                    return;
-                }
-                buildings = response.body();
-                geofencesList.setAdapter(geofencesListAdapter);
-            }
-
-            @Override
-            public void onFailure(Call<List<BuildingModel>> call, Throwable t) {
-                Log.d(TAG, "Failure getting building from db :" + t.getMessage());
-                //Toast.makeText(SignInActivity.this, "Failure getting building from db :" + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

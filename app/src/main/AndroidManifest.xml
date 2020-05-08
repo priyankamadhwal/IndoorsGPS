@@ -16,13 +16,13 @@
         android:roundIcon="@mipmap/ic_launcher_indoorsgps_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
-        <activity
-            android:name="com.acms.iexplore.activities.HomeActivity"
-            android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        tools:ignore="LockedOrientationActivity"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
+
         <activity
             android:name="com.acms.iexplore.activities.SplashActivity"
+            android:screenOrientation="portrait"
             android:noHistory="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -31,8 +31,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.acms.iexplore.activities.HomeActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_home"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity
             android:name="com.acms.iexplore.activities.SignInActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/SignInTheme" />
 
         <receiver

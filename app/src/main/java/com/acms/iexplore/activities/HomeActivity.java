@@ -2,7 +2,6 @@ package com.acms.iexplore.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acms.iexplore.geofence.GeofenceHelper;
-import com.acms.iexplore.googlesignin.GoogleSignInOptionsInstance;
+import com.acms.iexplore.googlesigninoptions.GoogleSignInOptionsInstance;
 import com.acms.iexplore.location.LocationUpdatesService;
 import com.acms.iexplore.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -39,6 +38,7 @@ import androidx.appcompat.widget.Toolbar;
 public class HomeActivity extends AppCompatActivity {
 
     private final String TAG = "HomeActivity";
+
     private NavigationView navigationView;
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -50,12 +50,10 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        /*
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-         */
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
 
@@ -63,10 +61,8 @@ public class HomeActivity extends AppCompatActivity {
         geofenceHelper = new GeofenceHelper(this);
 
         updateHeader();
-        bindSignOut();
+        bindSignOutItem();
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_buildings, R.id.nav_profile)
                 .setDrawerLayout(drawer)
@@ -97,7 +93,6 @@ public class HomeActivity extends AppCompatActivity {
     private void updateHeader() {
         View headerView = navigationView.getHeaderView(0);
 
-
         try {
             ImageView userProfileImageView = headerView.findViewById(R.id.userProfileImageView);
             String userProfileImageUrl = GoogleSignIn.getLastSignedInAccount(this).getPhotoUrl().toString();
@@ -114,44 +109,43 @@ public class HomeActivity extends AppCompatActivity {
             userEmailView.setText(GoogleSignIn.getLastSignedInAccount(this).getEmail());
         }
         catch (Exception e) {
-            Log.d(TAG, "Error in photo load");
+            Toast.makeText(this, "Error while updating nav header: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void bindSignOut() {
+    private void bindSignOutItem() {
         navigationView.getMenu().findItem(R.id.nav_sign_out).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                removeGeofences();
+                removeGeofencesAndSignOut();
                 stopLocationUpdatesService();
-                GoogleSignInClient googleSignInClient = GoogleSignIn.getClient (HomeActivity.this, GoogleSignInOptionsInstance.getGoogleSignInOptionsInstance(HomeActivity.this));
-                googleSignInClient.signOut().addOnCompleteListener(HomeActivity.this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
-                        intent.putExtra("signed_out", true);
-                        startActivity(intent);
-                    }
-                });
                 return true;
             }
         });
     }
 
-    private void removeGeofences() {
+    private void removeGeofencesAndSignOut() {
         geofencingClient.removeGeofences(geofenceHelper.getPendingIntent())
                 .addOnSuccessListener(this, new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Geofences removed...");
-                        //Toast.makeText(getApplicationContext(), "Geofences removed...", Toast.LENGTH_SHORT).show();
+                        // Geofences removed successfully, sign out
+                        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient (HomeActivity.this, GoogleSignInOptionsInstance.getGoogleSignInOptionsInstance(HomeActivity.this));
+                        googleSignInClient.signOut().addOnCompleteListener(HomeActivity.this, new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // Go to sign in activity
+                                Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                                intent.putExtra("signed_out", true);
+                                startActivity(intent);
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, "Failed to remove geofences...");
-                        Toast.makeText(getApplicationContext(), "FAiled to remove geofences...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Failed to remove geofences and sign out.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

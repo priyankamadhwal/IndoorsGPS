@@ -1,12 +1,12 @@
 package com.acms.iexplore.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -34,9 +34,13 @@ public class ProfileFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_profile, container, false);
 
         // Update profile
+        updateProfileDetails(root);
 
+        return root;
+    }
+
+    private void updateProfileDetails(View root) {
         try {
-
             TextView userIdView = root.findViewById(R.id.userIdView);
             userIdView.setText("ID: " + GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getId());
 
@@ -55,9 +59,7 @@ public class ProfileFragment extends Fragment {
             userEmailView.setText(GoogleSignIn.getLastSignedInAccount(getContext()).getEmail());
         }
         catch (Exception e) {
-            Log.d(TAG, "Error in getting account info");
+            Toast.makeText(getContext(), "Error while updating nav header: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
-        return root;
     }
 }

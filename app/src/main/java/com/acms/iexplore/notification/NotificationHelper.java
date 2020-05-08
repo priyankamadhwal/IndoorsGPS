@@ -45,7 +45,7 @@ public class NotificationHelper extends Application {
         return  new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(body)
-                .setSmallIcon(R.drawable.ic_location)
+                .setSmallIcon(R.drawable.ic_indoorsgps_icon)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setOnlyAlertOnce(true)
                 .setContentIntent(pendingIntent)

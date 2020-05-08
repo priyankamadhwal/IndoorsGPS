@@ -1,4 +1,4 @@
-package com.acms.iexplore.googlesignin;
+package com.acms.iexplore.googlesigninoptions;
 
 import android.content.Context;
 

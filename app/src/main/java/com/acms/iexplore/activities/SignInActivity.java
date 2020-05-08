@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.acms.iexplore.geofence.GeofenceHelper;
-import com.acms.iexplore.googlesignin.GoogleSignInOptionsInstance;
+import com.acms.iexplore.googlesigninoptions.GoogleSignInOptionsInstance;
 import com.acms.iexplore.R;
 import com.acms.iexplore.retrofit.RetrofitClientInstance;
 import com.acms.iexplore.retrofit.RetrofitInterface;
@@ -27,7 +27,6 @@ import com.acms.iexplore.models.BuildingModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -112,28 +111,9 @@ public class SignInActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
                     @Override
                     public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
-                        goToMainActivity();
+                        goToHomeActivity();
                     }
                 });
-    }
-
-    private void handleSignInResult(@NonNull Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            String idToken = account.getIdToken();
-
-            // send ID Token to server and validate
-
-            // Check permissions
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                checkPermissions();
-            else
-                addGeofencesFromDB();
-
-        }
-        catch (ApiException e) {
-            Log.w(TAG, "handleSignInResult:error", e);
-        }
     }
 
     @Override
@@ -141,17 +121,18 @@ public class SignInActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_GET_TOKEN) {
-            // This task is always completed immediately, there is no need to attach an
-            // asynchronous listener.
+            // This task is always completed immediately, there is no need to attach an asynchronous listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
     }
 
-    private void goToMainActivity() {
-        Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
-        intent.putExtra("signed_in", true);
-        startActivity(intent);
+    private void handleSignInResult(@NonNull Task<GoogleSignInAccount> completedTask) {
+            // Check permissions
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                checkPermissions();
+            else
+                addGeofencesFromDB();
     }
 
     private void checkPermissions() {
@@ -255,7 +236,7 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<BuildingModel>> call, Response<List<BuildingModel>> response) {
                 if (!response.isSuccessful()) {
-                    Log.d(TAG, "Getting building info- Failure code " + response.code());
+                    Toast.makeText(SignInActivity.this, "Failed to fetch geofences, failure code: " + response.code(), Toast.LENGTH_SHORT).show();
                     googleSignInClient.signOut();
                     return;
                 }
@@ -263,34 +244,28 @@ public class SignInActivity extends AppCompatActivity {
                 List <BuildingModel> buildings = response.body();
                 List <Geofence> geofencesList = getGeofencesList(buildings);
 
-                if (geofencesList.size() > 0) {
-                    GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofencesList);
-                    PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
-                    geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                GeofencingRequest geofencingRequest = geofenceHelper.getGeofencingRequest(geofencesList);
+                PendingIntent pendingIntent = geofenceHelper.getPendingIntent();
+                geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    //Toast.makeText(SignInActivity.this, "Geofences added...", Toast.LENGTH_SHORT).show();
-                                    goToMainActivity();
-                                    Log.d(TAG, "onSuccess : Geofences added...");
+                                    goToHomeActivity();
                                 }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     String errorMessage = geofenceHelper.getErrorString(e);
-                                    Log.d(TAG, "onFailure : " + errorMessage);
-                                    Toast.makeText(SignInActivity.this, "onFailure : " + errorMessage, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SignInActivity.this, "Failed to add geofences: " + errorMessage, Toast.LENGTH_SHORT).show();
                                     googleSignInClient.signOut();
                                 }
-                            });
-                }
+                        });
             }
 
             @Override
             public void onFailure(Call<List<BuildingModel>> call, Throwable t) {
-                Log.d(TAG, "Failure getting building from db :" + t.getMessage());
-                Toast.makeText(SignInActivity.this, "Failure getting building from db :" + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignInActivity.this, "Failed to fetch geofences from db: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 googleSignInClient.signOut();
             }
         });
@@ -299,7 +274,6 @@ public class SignInActivity extends AppCompatActivity {
     private List <Geofence> getGeofencesList(List <BuildingModel> buildings) {
         List <Geofence> geofencesList = new ArrayList<Geofence>();
         for (BuildingModel building : buildings) {
-            //if (!checkGeofenceExists(building.getId())) {
             Geofence geofence = geofenceHelper.getGeofence(
                     building.getId(),
                     building.getLatitude(),
@@ -310,5 +284,11 @@ public class SignInActivity extends AppCompatActivity {
             geofencesList.add(geofence);
         }
         return geofencesList;
+    }
+
+    private void goToHomeActivity() {
+        Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+        intent.putExtra("signed_in", true);
+        startActivity(intent);
     }
 }
