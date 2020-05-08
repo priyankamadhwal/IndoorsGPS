@@ -79,9 +79,19 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateUI(double latitude, double longitude, double altitude, String buildingId) {
-        latitudeView.setText("Latitude : " + latitude);
-        longitudeView.setText("Longitude : " + longitude);
-        altitudeView.setText("Altitude : " + altitude);
-        buildingIdView.setText("Building ID : " + buildingId);
+        if (!(buildingId.equals("-1"))) {
+            webView.setVisibility(View.VISIBLE);
+            latitudeView.setText("Latitude : " + latitude);
+            longitudeView.setText("Longitude : " + longitude);
+            altitudeView.setText("Altitude : " + altitude);
+            buildingIdView.setText("Building ID : " + buildingId);
+        }
+        else {
+            webView.setVisibility(View.INVISIBLE);
+            latitudeView.setText("Latitude");
+            longitudeView.setText("Longitude");
+            altitudeView.setText("Altitude");
+            buildingIdView.setText("Building ID");
+        }
     }
 }
