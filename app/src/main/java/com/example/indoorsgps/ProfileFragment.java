@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -41,7 +42,7 @@ public class ProfileFragment extends Fragment {
             userIdView.setText("ID: " + GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getId());
 
             ImageView userProfileImageView = root.findViewById(R.id.userProfileImageView);
-            String userProfileImageUrl = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getPhotoUrl().toString();
+            String userProfileImageUrl = GoogleSignIn.getLastSignedInAccount(getContext()).getPhotoUrl().toString();
             userProfileImageUrl = userProfileImageUrl.replace("s96-c", "s400-c");
             Picasso.get().load(userProfileImageUrl)
                     .placeholder(R.drawable.profile_picture_placeholder)
@@ -49,10 +50,10 @@ public class ProfileFragment extends Fragment {
                     .into(userProfileImageView);
 
             TextView userDisplayNameView = root.findViewById(R.id.userDisplayNameView);
-            userDisplayNameView.setText(GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getDisplayName());
+            userDisplayNameView.setText(GoogleSignIn.getLastSignedInAccount(getContext()).getDisplayName());
 
             TextView userEmailView = root.findViewById(R.id.userEmailView);
-            userEmailView.setText(GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext()).getEmail());
+            userEmailView.setText(GoogleSignIn.getLastSignedInAccount(getContext()).getEmail());
         }
         catch (Exception e) {
             Log.d(TAG, "Error in getting account info");

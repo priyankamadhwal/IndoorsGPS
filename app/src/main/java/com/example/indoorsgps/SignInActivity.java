@@ -31,6 +31,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -78,6 +79,10 @@ public class SignInActivity extends AppCompatActivity {
 
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeofenceHelper(this);
+
+        if (getIntent().getBooleanExtra("signed_out", false)) {
+            Snackbar.make(findViewById(R.id.signInLinearLayout), "Signed out successfully! Geofences are removed.", Snackbar.LENGTH_LONG).show();
+        }
 
         //refreshIdToken();
     }
@@ -139,6 +144,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void goToMainActivity() {
         Intent intent = new Intent(SignInActivity.this, HomeActivity.class);
+        intent.putExtra("signed_in", true);
         startActivity(intent);
     }
 
@@ -258,7 +264,7 @@ public class SignInActivity extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Toast.makeText(SignInActivity.this, "Geofences added...", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(SignInActivity.this, "Geofences added...", Toast.LENGTH_SHORT).show();
                                     goToMainActivity();
                                     Log.d(TAG, "onSuccess : Geofences added...");
                                 }

@@ -13,10 +13,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.indoorsgps.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_buildings"
+        android:name="com.example.indoorsgps.BuildingsFragment"
+        android:label="Buildings"
+        tools:layout="@layout/fragment_buildings" />
 
     <fragment
         android:id="@+id/nav_profile"

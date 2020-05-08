@@ -11,22 +11,21 @@
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        card_view:cardCornerRadius="4dp"
+        card_view:cardCornerRadius="8dp"
         card_view:cardElevation="8dp"
         android:layout_gravity="center">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="60dp"
+        android:padding="40dp"
         android:orientation="vertical"
         android:gravity="center">
 
         <TextView
             android:id="@+id/userIdView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_marginBottom="20dp"
             android:textSize="12sp"
             android:textColor="@color/backgroundSecondary"
@@ -40,17 +39,16 @@
 
         <TextView
             android:id="@+id/userDisplayNameView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:gravity="center"
             android:text="User Name"
             android:textColor="@color/background"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/userEmailView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="16sp"

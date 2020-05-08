@@ -66,12 +66,16 @@ public class HomeActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_profile)
+                R.id.nav_home, R.id.nav_buildings, R.id.nav_profile)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        if (getIntent().getBooleanExtra("signed_in", false)) {
+            Snackbar.make(findViewById(R.id.drawer_layout), "Signed in successfully! Geofences are added.", Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -123,6 +127,7 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Intent intent = new Intent(HomeActivity.this, SignInActivity.class);
+                        intent.putExtra("signed_out", true);
                         startActivity(intent);
                     }
                 });
@@ -137,7 +142,7 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "Geofences removed...");
-                        Toast.makeText(getApplicationContext(), "Geofences removed...", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Geofences removed...", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
