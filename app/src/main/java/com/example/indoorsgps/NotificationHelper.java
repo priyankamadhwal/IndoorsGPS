@@ -58,7 +58,7 @@ public class NotificationHelper extends Application {
 
         Notification notification = sendNotification(
                 context,
-                "Location Updates Service",
+                "Sending Location Updates",
                 content,
                 pendingIntent
         );
