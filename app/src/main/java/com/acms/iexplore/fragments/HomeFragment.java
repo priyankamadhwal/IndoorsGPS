@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.fragments;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.acms.iexplore.R;
 
 public class HomeFragment extends Fragment {
 

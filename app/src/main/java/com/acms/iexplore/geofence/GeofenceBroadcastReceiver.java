@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.geofence;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
+import com.acms.iexplore.location.LocationUpdatesService;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingEvent;
 

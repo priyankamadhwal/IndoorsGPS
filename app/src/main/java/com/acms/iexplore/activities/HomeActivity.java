@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.acms.iexplore.geofence.GeofenceHelper;
+import com.acms.iexplore.googlesignin.GoogleSignInOptionsInstance;
+import com.acms.iexplore.location.LocationUpdatesService;
+import com.acms.iexplore.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.location.GeofencingClient;

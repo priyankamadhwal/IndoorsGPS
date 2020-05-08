@@ -1,10 +1,11 @@
-package com.acms.iexplore;
+package com.acms.iexplore.geofence;
 
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 
+import com.acms.iexplore.geofence.GeofenceBroadcastReceiver;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;

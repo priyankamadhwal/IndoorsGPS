@@ -1,7 +1,8 @@
-package com.acms.iexplore;
+package com.acms.iexplore.googlesignin;
 
 import android.content.Context;
 
+import com.acms.iexplore.R;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 public class GoogleSignInOptionsInstance {

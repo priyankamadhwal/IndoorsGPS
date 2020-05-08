@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.fragments;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.acms.iexplore.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.squareup.picasso.Picasso;
 

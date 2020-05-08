@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.fragments;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +10,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+
+import com.acms.iexplore.R;
+import com.acms.iexplore.retrofit.RetrofitClientInstance;
+import com.acms.iexplore.retrofit.RetrofitInterface;
+import com.acms.iexplore.models.BuildingModel;
 
 import java.util.List;
 

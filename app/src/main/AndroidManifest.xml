@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name="com.acms.iexplore.NotificationHelper"
+        android:name="com.acms.iexplore.notification.NotificationHelper"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_indoorsgps"
         android:label="@string/app_name"
@@ -18,11 +18,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.acms.iexplore.HomeActivity"
+            android:name="com.acms.iexplore.activities.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name="com.acms.iexplore.SplashActivity"
+            android:name="com.acms.iexplore.activities.SplashActivity"
             android:noHistory="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -32,20 +32,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.acms.iexplore.SignInActivity"
+            android:name="com.acms.iexplore.activities.SignInActivity"
             android:theme="@style/SignInTheme" />
 
         <receiver
-            android:name="com.acms.iexplore.GeofenceBroadcastReceiver"
+            android:name="com.acms.iexplore.geofence.GeofenceBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name="com.acms.iexplore.LocationUpdatesService"
+            android:name="com.acms.iexplore.location.LocationUpdatesService"
             android:enabled="true"
             android:exported="true" />
-
-        <activity android:name="com.acms.iexplore.MainActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

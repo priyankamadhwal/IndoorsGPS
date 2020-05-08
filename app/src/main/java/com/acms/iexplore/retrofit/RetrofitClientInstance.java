@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.retrofit;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

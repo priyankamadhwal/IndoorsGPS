@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -18,6 +18,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.acms.iexplore.geofence.GeofenceHelper;
+import com.acms.iexplore.googlesignin.GoogleSignInOptionsInstance;
+import com.acms.iexplore.R;
+import com.acms.iexplore.retrofit.RetrofitClientInstance;
+import com.acms.iexplore.retrofit.RetrofitInterface;
+import com.acms.iexplore.models.BuildingModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;

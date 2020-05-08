@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.notification;
 
 import android.app.Application;
 import android.app.Notification;
@@ -10,6 +10,9 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
+
+import com.acms.iexplore.R;
+import com.acms.iexplore.activities.HomeActivity;
 
 public class NotificationHelper extends Application {
 
@@ -53,7 +56,7 @@ public class NotificationHelper extends Application {
     public Notification createNotification(Context context, String content) {
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
                 0,
-                new Intent(context, MainActivity.class),
+                new Intent(context, HomeActivity.class),
                 0);
 
         Notification notification = sendNotification(

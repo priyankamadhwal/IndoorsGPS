@@ -1,4 +1,4 @@
-package com.acms.iexplore;
+package com.acms.iexplore.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 

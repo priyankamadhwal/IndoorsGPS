@@ -1,4 +1,7 @@
-package com.acms.iexplore;
+package com.acms.iexplore.retrofit;
+
+import com.acms.iexplore.models.BuildingModel;
+import com.acms.iexplore.models.UserLocationModel;
 
 import java.util.List;
 
