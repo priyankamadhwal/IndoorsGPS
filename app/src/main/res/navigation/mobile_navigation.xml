@@ -7,20 +7,20 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.indoorsgps.HomeFragment"
+        android:name="com.acms.iexplore.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
     </fragment>
 
     <fragment
         android:id="@+id/nav_buildings"
-        android:name="com.example.indoorsgps.BuildingsFragment"
+        android:name="com.acms.iexplore.BuildingsFragment"
         android:label="Buildings"
         tools:layout="@layout/fragment_buildings" />
 
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.example.indoorsgps.ProfileFragment"
+        android:name="com.acms.iexplore.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

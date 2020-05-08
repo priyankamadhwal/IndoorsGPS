@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">IndoorsGPS</string>
-    <string name="server_client_id">6295705860-nqe7mcm04cucgeebemcimmo9419636bi.apps.googleusercontent.com</string>
+    <string name="app_name">iExplore</string>
+    <string name="server_client_id">161339788243-ore1u29vip8h2jf5ietf1u6le169jpob.apps.googleusercontent.com</string>
     <string name="title_activity_home">HomeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

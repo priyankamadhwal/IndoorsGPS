@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.indoorsgps">
+    package="com.acms.iexplore">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name=".NotificationHelper"
+        android:name="com.acms.iexplore.NotificationHelper"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_indoorsgps"
         android:label="@string/app_name"
@@ -18,11 +18,11 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".HomeActivity"
+            android:name="com.acms.iexplore.HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".SplashActivity"
+            android:name="com.acms.iexplore.SplashActivity"
             android:noHistory="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -32,20 +32,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignInActivity"
+            android:name="com.acms.iexplore.SignInActivity"
             android:theme="@style/SignInTheme" />
 
         <receiver
-            android:name=".GeofenceBroadcastReceiver"
+            android:name="com.acms.iexplore.GeofenceBroadcastReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name=".LocationUpdatesService"
+            android:name="com.acms.iexplore.LocationUpdatesService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".MainActivity" />
+        <activity android:name="com.acms.iexplore.MainActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
