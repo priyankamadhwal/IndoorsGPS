@@ -22,7 +22,7 @@ To import this project into Android Studio, proceed as follows:
 3. Click **Clone**.
 4. Configure [Google API Console project](https://developers.google.com/identity/sign-in/android/start-integrating#configure_a_project).
 5. Download and add *credentials.json* to **app** folder.
-6. Get the **Web application** type client id from [**Credentials Page**](https://console.developers.google.com/apis/credentials) in the API console project and add it to SERVER_CLIENT_ID in /app/src/main/java/com/acms/iexplore/data/**Constants.java**.
+6. Get the **Web application** type client id from [Credentials Page](https://console.developers.google.com/apis/credentials) in the API console project and add it to SERVER_CLIENT_ID in /app/src/main/java/com/acms/iexplore/data/**Constants.java**.
 7. Edit IP_ADDRESS, PORT_SERVER and PORT_WEB in /app/src/main/java/com/acms/iexplore/data/**Constants.java**.
 6. [Build the app](https://developer.android.com/studio/run#reference).
 
@@ -30,13 +30,13 @@ To import this project into Android Studio, proceed as follows:
 1. Install [iExplore-server](https://github.com/shubhangi-ghosh/ACMS_server).
 2. Run server ```node app.js```
 3. Install [iExplore-webapp](https://github.com/Shrutikatyal/iExplore-web).
-4. Run webapp: ```ng serve --host <ip address>
-5. [Build and run the app]((https://developer.android.com/studio/run).
+4. Run webapp: ```ng serve --host <ip address>```
+5. [Build and run the app](https://developer.android.com/studio/run).
 
-_**Note:** 
+**Note:** 
 1. Make sure that the server, webapp and android app are connected to the same network.
 2. To run the app on emulator use ip address: 10.0.2.2
-3. If you are runnig the app on emulator, then run the webapp using ```ng serve``` only._
+3. If you are runnig the app on emulator, then run the webapp using ```ng serve``` only.
 
 ## Dev
 
