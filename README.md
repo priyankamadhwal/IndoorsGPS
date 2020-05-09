@@ -1,4 +1,4 @@
-# IndoorsGPS
+# iExplore-app
 An android application developed under ACMS (Amazon Campus Mentorship Series) project.
 
 ### Problem Statement
@@ -167,7 +167,7 @@ Geofencing combines awareness of the user's current location with awareness of t
 <br />
 <b><u>Our solution:</u></b><br />
   In this app, we are using geofences to determine when a user enters or exits a building. The app will start sending the location updates to server as soon as the ENTER event is triggered and stop the moment the EXIT event is triggered. Also, geofences are being added to monitor multiple buildings so that we can know in which building the user currently is.
-<br />
+<br /><br />
 </details>
 
 <details>
