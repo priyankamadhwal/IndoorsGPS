@@ -1,4 +1,4 @@
-# IndoorsGPS
+# iExplore-app
 An android application developed under ACMS (Amazon Campus Mentorship Series) project.
 
 ### Problem Statement
@@ -20,7 +20,23 @@ To import this project into Android Studio, proceed as follows:
 1. Click **File** > **New** > **Project from Version Control** > **Git**.
 2. Enter URL: https://github.com/priyankamadhwal/IndoorsGPS.git
 3. Click **Clone**.
+4. Configure [Google API Console project](https://developers.google.com/identity/sign-in/android/start-integrating#configure_a_project).
+5. Download and add *credentials.json* to **app** folder.
+6. Get the **Web application** type client id from [Credentials Page](https://console.developers.google.com/apis/credentials) in the API console project and add it to SERVER_CLIENT_ID in /app/src/main/java/com/acms/iexplore/data/**Constants.java**.
+7. Edit IP_ADDRESS, PORT_SERVER and PORT_WEB in /app/src/main/java/com/acms/iexplore/data/**Constants.java**.
+6. [Build the app](https://developer.android.com/studio/run#reference).
+
+### Project Setup
+1. Install [iExplore-server](https://github.com/shubhangi-ghosh/ACMS_server).
+2. Run server ```node app.js```
+3. Install [iExplore-webapp](https://github.com/Shrutikatyal/iExplore-web).
+4. Run webapp: ```ng serve --host <ip address>```
 5. [Build and run the app](https://developer.android.com/studio/run).
+
+**Note:** 
+1. Make sure that the server, webapp and android app are connected to the same network.
+2. To run the app on emulator use ip address: 10.0.2.2
+3. If you are runnig the app on emulator, then run the webapp using ```ng serve``` only.
 
 ## Dev
 
@@ -34,7 +50,9 @@ To import this project into Android Studio, proceed as follows:
 - [x] Adding Geofence for a single building
 - [x] Adding Geofences for multiple buildings (stored in DB)
 - [x] Authentication
-- [ ] UI Design
+- [x] UI Design
+- [ ] Unit testing
+- [ ] Integration testing
 
 ### Development Decisions
 *(Click to expand)*
@@ -89,10 +107,7 @@ The Google Location Services API, part of Google Play Services, provides a more 
 It's drawback is that app will only be able to run on devices with Google Play services installed in it.<br />
 <br />
 <b><u>Our solution:</u></b><br />
-- Check if the user’s device has the play services installed.<br />
-- If yes, then use FusedLocationProviderClient. <br />
-- Otherwise, use Android's Location API.<br />
-<i><b>Note: </b>Currently we are using only FusedLocationProviderClient and will add Android Location API in a later update.</i>
+We will be using the FusedLocationProviderClient along with other Google Play Services APIs: Geofencing and Google sign-in.
 <br />
 <br />
 </details>
@@ -153,9 +168,67 @@ It's drawback is that app will only be able to run on devices with Google Play s
 <br />
 </details>
 
+<details>
+  <summary><b>Geofencing</b></summary>
+  <br />
+  <p>
+Geofencing combines awareness of the user's current location with awareness of the user's proximity to locations that may be of interest. To mark a location of interest, you specify its latitude and longitude. To adjust the proximity for the location, you add a radius. The latitude, longitude, and radius define a geofence, creating a circular area, or fence, around the location of interest.
+<p>
+  <b>Points to consider:</b><br />
+  <ul>
+    <li>You can have multiple active geofences, with a limit of 100 per app, per device user.</li>
+    <li>For best results, the minimium radius of the geofence should be set between 100 - 150 meters.</li>
+    <li>When Wi-Fi is available location accuracy is usually between 20 - 50 meters. When indoor location is available, the accuracy range can be as small as 5 meters. Unless you know indoor location is available inside the geofence, assume that Wi-Fi location accuracy is about 50 meters. When Wi-Fi location isn't available (for example, rural areas) the location accuracy degrades further.</li>
+    <li>If there is no reliable data connection, alerts might not be generated. This is because the geofence service depends on the network location provider which in turn requires a data connection.</li>
+    <li>The geofence service doesn't continuously query for location, so expect some latency when receiving alerts. Usually the latency is less than 2 minutes, even less when the device has been moving. If Background Location Limits are in effect, the latency is about 2-3 minutes on average. If the device has been stationary for a significant period of time, the latency may increase (up to 6 minutes).</li>
+  </ul>
+<br />
+<b><u>Our solution:</u></b><br />
+  In this app, we are using geofences to determine when a user enters or exits a building. The app will start sending the location updates to server as soon as the ENTER event is triggered and stop the moment the EXIT event is triggered. Also, geofences are being added to monitor multiple buildings so that we can know in which building the user currently is.
+<br /><br />
+</details>
+
+<details>
+  <summary><b>Authentication</b></summary>
+  <br />
+  <p>
+    We should verify a user's identity before giving him access to the app.
+  </p>
+<br />
+<b><u>Our solution:</u></b><br />
+  Currently, we are just using the <b>Google sign-in</b> option to let the user quickly and easily register/sign-in to our app with their existing Google account.
+<br /><br />
+</details>
+
+## Screenshots
+<details>
+  <summary>Click to view</summary>
+  <br />
+  <p align="center">
+    <img src="/screenshots/Screenshot_1_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_2_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_3_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_4_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_5_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_6_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_7_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_8_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_9_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_10_iExplore.jpg" width="150" />
+<!--     <img src="/screenshots/Screenshot_11_iExplore.jpg" width="150" /> -->
+  </p>
+</details>
+
 ## References
 - https://github.com/Karumi/Dexter
+- https://www.youtube.com/watch?v=ycja50TzjoU
+- https://stackoverflow.com/a/42964535
 - https://medium.com/@maheshikapiumi/android-location-services-7894cea13878
 - https://developer.android.com/training/location/request-updates
 - https://medium.com/@kevalpatel2106/how-to-handle-background-services-in-android-o-f96783e65268
 - https://android.jlelse.eu/local-broadcast-less-overhead-and-secure-in-android-cfa343bb05be
+- https://androidwave.com/foreground-service-android-example/
+- https://www.youtube.com/watch?v=rNYaEFl6Fms
+- https://www.youtube.com/watch?v=nmAtMqljH9M
+- https://developer.android.com/training/location/geofencing
+- https://developers.google.com/identity/sign-in/android/start-integrating
