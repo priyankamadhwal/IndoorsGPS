@@ -198,21 +198,21 @@ Geofencing combines awareness of the user's current location with awareness of t
 <br /><br />
 </details>
 
-## Screenshots
-<br />
-<p align="center">
-  <img src="/screenshots/Screenshot_1_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_2_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_3_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_4_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_5_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_6_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_7_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_8_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_9_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_10_iExplore.jpg" width="250" />
-  <img src="/screenshots/Screenshot_11_iExplore.jpg" width="250" />
-</p>
+  ## Screenshots
+  <br />
+  <p align="center">
+    <img src="/screenshots/Screenshot_1_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_2_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_3_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_4_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_5_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_6_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_7_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_8_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_9_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_10_iExplore.jpg" width="150" />
+    <img src="/screenshots/Screenshot_11_iExplore.jpg" width="150" />
+  </p>
 
 ## References
 - https://github.com/Karumi/Dexter
