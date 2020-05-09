@@ -205,7 +205,7 @@ Geofencing combines awareness of the user's current location with awareness of t
   <summary>Click to view</summary>
   <br />
   <p align="center">
-    <img src="https://postimg.cc/PCZ7qctp" width="150" />
+    <img src="https://i.postimg.cc/9QNHL5Kp/Screenshot-20200509-122208-i-Explore.jpg" width="150" />
     <img src="/screenshots/Screenshot_2_iExplore.jpg" width="150" />
     <img src="/screenshots/Screenshot_3_iExplore.jpg" width="150" />
     <img src="/screenshots/Screenshot_4_iExplore.jpg" width="150" />
