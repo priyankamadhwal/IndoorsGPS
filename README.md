@@ -200,6 +200,12 @@ Geofencing combines awareness of the user's current location with awareness of t
 <br /><br />
 </details>
 
+## Workflow
+   
+<p align="center">
+<img src="https://i.postimg.cc/JnctBvFg/app-work-flow-1.png" width="500" />
+</center>
+
 ## Screenshots
 <details>
   <summary>Click to view</summary>
