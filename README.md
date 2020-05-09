@@ -201,7 +201,7 @@ Geofencing combines awareness of the user's current location with awareness of t
 ## Screenshots
 <br />
 <p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1NvABpCueB1BJ6BkyLTHMDjLVFgwVVX4b" width="48" />
+  <img src="https://drive.google.com/uc?export=view&id=1NvABpCueB1BJ6BkyLTHMDjLVFgwVVX4b" width="150" />
 </p>
 
 ## References
