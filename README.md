@@ -200,7 +200,14 @@ Geofencing combines awareness of the user's current location with awareness of t
 
 ## References
 - https://github.com/Karumi/Dexter
+- https://www.youtube.com/watch?v=ycja50TzjoU
+- https://stackoverflow.com/a/42964535
 - https://medium.com/@maheshikapiumi/android-location-services-7894cea13878
 - https://developer.android.com/training/location/request-updates
 - https://medium.com/@kevalpatel2106/how-to-handle-background-services-in-android-o-f96783e65268
 - https://android.jlelse.eu/local-broadcast-less-overhead-and-secure-in-android-cfa343bb05be
+- https://androidwave.com/foreground-service-android-example/
+- https://www.youtube.com/watch?v=rNYaEFl6Fms
+- https://www.youtube.com/watch?v=nmAtMqljH9M
+- https://developer.android.com/training/location/geofencing
+- https://developers.google.com/identity/sign-in/android/start-integrating
