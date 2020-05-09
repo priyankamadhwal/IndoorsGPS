@@ -198,6 +198,12 @@ Geofencing combines awareness of the user's current location with awareness of t
 <br /><br />
 </details>
 
+## Screenshots
+<br />
+<p align="center">
+  <img src="https://drive.google.com/uc?export=view&id=1NvABpCueB1BJ6BkyLTHMDjLVFgwVVX4b" width="100" />
+</p>
+
 ## References
 - https://github.com/Karumi/Dexter
 - https://www.youtube.com/watch?v=ycja50TzjoU
