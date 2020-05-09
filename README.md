@@ -198,7 +198,8 @@ Geofencing combines awareness of the user's current location with awareness of t
 <br /><br />
 </details>
 
-  ## Screenshots
+<details>
+  <summary>## Screenshots</summary>
   <br />
   <p align="center">
     <img src="/screenshots/Screenshot_1_iExplore.jpg" width="150" />
@@ -213,6 +214,7 @@ Geofencing combines awareness of the user's current location with awareness of t
     <img src="/screenshots/Screenshot_10_iExplore.jpg" width="150" />
     <img src="/screenshots/Screenshot_11_iExplore.jpg" width="150" />
   </p>
+</details>
 
 ## References
 - https://github.com/Karumi/Dexter
