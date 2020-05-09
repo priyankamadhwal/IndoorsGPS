@@ -89,10 +89,7 @@ The Google Location Services API, part of Google Play Services, provides a more 
 It's drawback is that app will only be able to run on devices with Google Play services installed in it.<br />
 <br />
 <b><u>Our solution:</u></b><br />
-- Check if the user’s device has the play services installed.<br />
-- If yes, then use FusedLocationProviderClient. <br />
-- Otherwise, use Android's Location API.<br />
-<i><b>Note: </b>Currently we are using only FusedLocationProviderClient and will add Android Location API in a later update.</i>
+We will be using the FusedLocationProviderClient along with other Google Play Services APIs: Geofencing and Google sign-in.
 <br />
 <br />
 </details>
@@ -171,6 +168,18 @@ Geofencing combines awareness of the user's current location with awareness of t
 <b><u>Our solution:</u></b><br />
   In this app, we are using geofences to determine when a user enters or exits a building. The app will start sending the location updates to server as soon as the ENTER event is triggered and stop the moment the EXIT event is triggered. Also, geofences are being added to monitor multiple buildings so that we can know in which building the user currently is.
 <br />
+</details>
+
+<details>
+  <summary><b>Authentication</b></summary>
+  <br />
+  <p>
+    We should verify a user's identity before giving him access to the app.
+  </p>
+<br />
+<b><u>Our solution:</u></b><br />
+  Currently, we are just using the Google sign-in option to let the user quickly and easily register/sign-in to our app with their existing Google account.
+<br /><br />
 </details>
 
 ## References
