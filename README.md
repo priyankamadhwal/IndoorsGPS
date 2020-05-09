@@ -153,6 +153,26 @@ It's drawback is that app will only be able to run on devices with Google Play s
 <br />
 </details>
 
+<details>
+  <summary><b>Geofencing</b></summary>
+  <br />
+  <p>
+Geofencing combines awareness of the user's current location with awareness of the user's proximity to locations that may be of interest. To mark a location of interest, you specify its latitude and longitude. To adjust the proximity for the location, you add a radius. The latitude, longitude, and radius define a geofence, creating a circular area, or fence, around the location of interest.
+<p>
+  Points to consider:<br />
+  <ul>
+    <li>You can have multiple active geofences, with a limit of 100 per app, per device user.</li>
+    <li>For best results, the minimium radius of the geofence should be set between 100 - 150 meters.</li>
+    <li>When Wi-Fi is available location accuracy is usually between 20 - 50 meters. When indoor location is available, the accuracy range can be as small as 5 meters. Unless you know indoor location is available inside the geofence, assume that Wi-Fi location accuracy is about 50 meters. When Wi-Fi location isn't available (for example, rural areas) the location accuracy degrades further.</li>
+    <li>If there is no reliable data connection, alerts might not be generated. This is because the geofence service depends on the network location provider which in turn requires a data connection.</li>
+    <li>The geofence service doesn't continuously query for location, so expect some latency when receiving alerts. Usually the latency is less than 2 minutes, even less when the device has been moving. If Background Location Limits are in effect, the latency is about 2-3 minutes on average. If the device has been stationary for a significant period of time, the latency may increase (up to 6 minutes).</li>
+  </ul>
+<br />
+<b><u>Our solution:</u></b><br />
+  In this app, we are using geofences to determine when a user enters or exits a building. The app will start sending the location updates to server as soon as the ENTER event is triggered and stop the moment the EXIT event is triggered. Also, geofences are being added to monitor multiple buildings so that we can know in which building the user currently is.
+<br />
+</details>
+
 ## References
 - https://github.com/Karumi/Dexter
 - https://medium.com/@maheshikapiumi/android-location-services-7894cea13878
