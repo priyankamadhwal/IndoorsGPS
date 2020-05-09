@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.acms.iexplore.customviews.LoadingDialog;
 import com.acms.iexplore.R;
 import com.acms.iexplore.retrofit.RetrofitClientInstance;
 import com.acms.iexplore.retrofit.RetrofitInterface;
@@ -32,6 +33,8 @@ public class BuildingsFragment extends Fragment {
 
     private List <BuildingModel> buildings;
 
+    private LoadingDialog loadingDialog;
+
     public BuildingsFragment() {
         // Required empty public constructor
     }
@@ -39,6 +42,8 @@ public class BuildingsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        loadingDialog = new LoadingDialog(getActivity());
 
         getBuildings();
     }
@@ -60,22 +65,27 @@ public class BuildingsFragment extends Fragment {
         Retrofit retrofit = RetrofitClientInstance.getRetrofitInstance();
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
+        loadingDialog.startLoadingDialog();
+
         Call<List<BuildingModel>> call = retrofitInterface.executeGetAllBuildingsInfo();
 
         call.enqueue(new Callback<List<BuildingModel>>() {
             @Override
             public void onResponse(Call<List<BuildingModel>> call, Response<List<BuildingModel>> response) {
                 if (!response.isSuccessful()) {
+                    loadingDialog.dismissLoadingDialog();
                     Toast.makeText(getContext(), "Failed to fetch buildings, failure code: " + response.code(), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 buildings = response.body();
+                loadingDialog.dismissLoadingDialog();
                 geofencesList.setAdapter(geofencesListAdapter);
             }
 
             @Override
             public void onFailure(Call<List<BuildingModel>> call, Throwable t) {
                 Toast.makeText(getContext(), "Failed to fetch buildings from db: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismissLoadingDialog();
             }
         });
     }

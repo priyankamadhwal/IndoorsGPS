@@ -13,11 +13,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.acms.iexplore.customviews.LoadingDialog;
 import com.acms.iexplore.geofence.GeofenceHelper;
 import com.acms.iexplore.googlesigninoptions.GoogleSignInOptionsInstance;
 import com.acms.iexplore.R;
@@ -64,6 +64,8 @@ public class SignInActivity extends AppCompatActivity {
     private GeofencingClient geofencingClient;
     private GeofenceHelper geofenceHelper;
 
+    private LoadingDialog loadingDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +83,8 @@ public class SignInActivity extends AppCompatActivity {
                 getIdToken();
             }
         });
+
+        loadingDialog = new LoadingDialog(SignInActivity.this);
 
         geofencingClient = LocationServices.getGeofencingClient(this);
         geofenceHelper = new GeofenceHelper(this);
@@ -185,6 +189,10 @@ public class SignInActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
+
+                        // sign out
+                        googleSignInClient.signOut();
+
                         // check for permanent denial of permission
                         if (response.isPermanentlyDenied()) {
                             // navigate user to app settings
@@ -230,6 +238,8 @@ public class SignInActivity extends AppCompatActivity {
         Retrofit retrofit = RetrofitClientInstance.getRetrofitInstance();
         RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
 
+        loadingDialog.startLoadingDialog();
+
         Call<List<BuildingModel>> call = retrofitInterface.executeGetAllBuildingsInfo();
 
         call.enqueue(new Callback<List<BuildingModel>>() {
@@ -237,6 +247,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onResponse(Call<List<BuildingModel>> call, Response<List<BuildingModel>> response) {
                 if (!response.isSuccessful()) {
                     Toast.makeText(SignInActivity.this, "Failed to fetch geofences, failure code: " + response.code(), Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismissLoadingDialog();
                     googleSignInClient.signOut();
                     return;
                 }
@@ -250,6 +261,7 @@ public class SignInActivity extends AppCompatActivity {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
+                                    loadingDialog.dismissLoadingDialog();
                                     goToHomeActivity();
                                 }
                         })
@@ -258,6 +270,7 @@ public class SignInActivity extends AppCompatActivity {
                                 public void onFailure(@NonNull Exception e) {
                                     String errorMessage = geofenceHelper.getErrorString(e);
                                     Toast.makeText(SignInActivity.this, "Failed to add geofences: " + errorMessage, Toast.LENGTH_SHORT).show();
+                                    loadingDialog.dismissLoadingDialog();
                                     googleSignInClient.signOut();
                                 }
                         });
@@ -266,6 +279,7 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<BuildingModel>> call, Throwable t) {
                 Toast.makeText(SignInActivity.this, "Failed to fetch geofences from db: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                loadingDialog.dismissLoadingDialog();
                 googleSignInClient.signOut();
             }
         });
