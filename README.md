@@ -156,7 +156,7 @@ We will be using the FusedLocationProviderClient along with other Google Play Se
   <p>
 Geofencing combines awareness of the user's current location with awareness of the user's proximity to locations that may be of interest. To mark a location of interest, you specify its latitude and longitude. To adjust the proximity for the location, you add a radius. The latitude, longitude, and radius define a geofence, creating a circular area, or fence, around the location of interest.
 <p>
-  Points to consider:<br />
+  <b>Points to consider:</b><br />
   <ul>
     <li>You can have multiple active geofences, with a limit of 100 per app, per device user.</li>
     <li>For best results, the minimium radius of the geofence should be set between 100 - 150 meters.</li>
@@ -178,7 +178,7 @@ Geofencing combines awareness of the user's current location with awareness of t
   </p>
 <br />
 <b><u>Our solution:</u></b><br />
-  Currently, we are just using the Google sign-in option to let the user quickly and easily register/sign-in to our app with their existing Google account.
+  Currently, we are just using the <b>Google sign-in</b> option to let the user quickly and easily register/sign-in to our app with their existing Google account.
 <br /><br />
 </details>
 
