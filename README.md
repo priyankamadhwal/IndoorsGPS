@@ -50,7 +50,9 @@ To import this project into Android Studio, proceed as follows:
 - [x] Adding Geofence for a single building
 - [x] Adding Geofences for multiple buildings (stored in DB)
 - [x] Authentication
-- [ ] UI Design
+- [x] UI Design
+- [ ] Unit testing
+- [ ] Integration testing
 
 ### Development Decisions
 *(Click to expand)*
