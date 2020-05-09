@@ -201,7 +201,17 @@ Geofencing combines awareness of the user's current location with awareness of t
 ## Screenshots
 <br />
 <p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1NvABpCueB1BJ6BkyLTHMDjLVFgwVVX4b" width="150" />
+  <img src="https://drive.google.com/uc?export=view&id=1NvABpCueB1BJ6BkyLTHMDjLVFgwVVX4b" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1Nu8Px97FXOKXPrHn3vAD2L1fLKHLr7c8" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1NpoAYFc6eOWsr8X97aOf5suuSm4EQ4ot" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1NHc7O7QTn4UrwLZ_c8zkAEJrcFTVignB" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1NIBh0R7JQTDU9km3HG4LcEOI5Sq_yXI1" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1O0Zkqmglrh8zSOtgWxOdTPe_1ZPelsg5" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1NFpgoJ9RnaAaekeYOgZq7h-FeWSH13j_" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1N5nikFfT0b1pTQ-4bomCliHal6Ic3gnW" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1NfMg8Y36nYHeE93zrXBBTRJpn4zwsLoc" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1Na4jvXDnWwk1_mICGStU-sLAlwu7etad" width="250" />
+  <img src="https://drive.google.com/uc?export=view&id=1NNi-Z1xZO8oR7UBbB7Y23XAdm1HLsSPn" width="250" />
 </p>
 
 ## References
