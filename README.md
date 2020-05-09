@@ -197,9 +197,9 @@ Geofencing combines awareness of the user's current location with awareness of t
   Currently, we are just using the <b>Google sign-in</b> option to let the user quickly and easily register/sign-in to our app with their existing Google account.
 <br /><br />
 </details>
-
+<br />
 <details>
-  <summary>## Screenshots</summary>
+  <summary><h3><b>Screenshots</b></h3></summary>
   <br />
   <p align="center">
     <img src="/screenshots/Screenshot_1_iExplore.jpg" width="150" />
@@ -212,7 +212,7 @@ Geofencing combines awareness of the user's current location with awareness of t
     <img src="/screenshots/Screenshot_8_iExplore.jpg" width="150" />
     <img src="/screenshots/Screenshot_9_iExplore.jpg" width="150" />
     <img src="/screenshots/Screenshot_10_iExplore.jpg" width="150" />
-    <img src="/screenshots/Screenshot_11_iExplore.jpg" width="150" />
+<!--     <img src="/screenshots/Screenshot_11_iExplore.jpg" width="150" /> -->
   </p>
 </details>
 
