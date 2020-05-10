@@ -18,7 +18,7 @@ Android Studio, Git
 To import this project into Android Studio, proceed as follows:
 
 1. Click **File** > **New** > **Project from Version Control** > **Git**.
-2. Enter URL: https://github.com/priyankamadhwal/IndoorsGPS.git
+2. Enter URL: https://github.com/priyankamadhwal/iExplore-app.git
 3. Click **Clone**.
 4. Configure [Google API Console project](https://developers.google.com/identity/sign-in/android/start-integrating#configure_a_project).
 5. Download and add *credentials.json* to **app** folder.
