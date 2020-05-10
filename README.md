@@ -12,7 +12,7 @@ Build a web tool which shows a building boundary and all the people moving insid
 ## Getting Started
 
 ### Prerequisites
-Android Studio, Git, iExplore-server and iExplore-webapp
+[Android Studio](https://developer.android.com/studio), [Git](https://git-scm.com/downloads), [iExplore-server](https://github.com/shubhangi-ghosh/ACMS_server) and [iExplore-webapp](https://github.com/Shrutikatyal/iExplore-web)
 
 ### Installation
 To import this project into Android Studio, proceed as follows:
