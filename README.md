@@ -12,7 +12,7 @@ Build a web tool which shows a building boundary and all the people moving insid
 ## Getting Started
 
 ### Prerequisites
-Android Studio, Git, Submodules: iExplore-server and iExplore-webapp
+Android Studio, Git, iExplore-server and iExplore-webapp
 
 ### Installation
 To import this project into Android Studio, proceed as follows:
